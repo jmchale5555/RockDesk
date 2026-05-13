@@ -2,9 +2,6 @@
 
 namespace Controller;
 
-use Model\User;
-use Core\Request;
-
 defined('ROOTPATH') or exit('Access Denied');
 
 /**
@@ -16,28 +13,7 @@ class Signup
 
     public function index()
     {
-        $data = [];
-
-        $req = new Request;
-        if ($req->posted())
-        {
-
-            $user = new User;
-            if ($user->validate($req->post()))
-            {
-                // unset($req->post('confirm'));
-                $hashed_password = password_hash($req->post('password'), PASSWORD_BCRYPT);
-                $req->set('password', $hashed_password);
-                $req->set('created_at', date("Y-m-d H:i:s"));
-                $user->insert($req->post());
-                message("Profile created successfully");
-                redirect('login');
-            }
-
-            $data['errors'] = $user->errors;
-        }
-
-
-        $this->view('signup', $data);
+        message('Accounts are created by an administrator. Please contact support if you need access.');
+        redirect('login');
     }
 }

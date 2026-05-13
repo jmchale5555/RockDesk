@@ -70,31 +70,31 @@ The existing router maps `/controller/method/param1/param2` to controller method
 
 Purpose: replace admin boolean behavior with role-based access and prepare users for username login plus future AD auth.
 
-- [ ] Add `username` column to `users`.
-- [ ] Backfill existing users with a username derived from email or name.
-- [ ] Add unique index on `username`.
-- [ ] Keep `email` as optional or required contact/profile field.
-- [ ] Add `role` column with allowed values `user`, `staff`, `admin`.
-- [ ] Backfill current `is_admin = 1` users to `role = 'admin'`.
-- [ ] Backfill all others to `role = 'user'`.
-- [ ] Add index on `role`.
-- [ ] Add `auth_provider` with allowed values `local`, `ldap`, default `local`.
-- [ ] Add `is_active`, default `1`.
-- [ ] Add `must_reset_password`, default `0`.
-- [ ] Add `last_login_at`.
-- [ ] Add `directory_guid` nullable column.
-- [ ] Add `directory_domain` nullable column.
-- [ ] Add `directory_username` nullable column.
-- [ ] Add `directory_dn` nullable column.
-- [ ] Add `directory_synced_at` nullable column.
-- [ ] Add indexes for `auth_provider`, `directory_guid`, and `directory_username`.
-- [ ] Update the default admin seeder to include `username`, `role`, `auth_provider`, and `is_active`.
-- [ ] Update the `User` model allowed columns.
-- [ ] Update login to authenticate by `username`.
-- [ ] Update login to block inactive users.
-- [ ] Update login to set `last_login_at`.
-- [ ] Stop relying on `is_admin` in application code.
-- [ ] Leave `is_admin` in place temporarily only if needed for a safe migration path.
+- [x] Add `username` column to `users`.
+- [x] Backfill existing users with a username derived from email or name.
+- [x] Add unique index on `username`.
+- [x] Keep `email` as optional or required contact/profile field.
+- [x] Add `role` column with allowed values `user`, `staff`, `admin`.
+- [x] Backfill current `is_admin = 1` users to `role = 'admin'`.
+- [x] Backfill all others to `role = 'user'`.
+- [x] Add index on `role`.
+- [x] Add `auth_provider` with allowed values `local`, `ldap`, default `local`.
+- [x] Add `is_active`, default `1`.
+- [x] Add `must_reset_password`, default `0`.
+- [x] Add `last_login_at`.
+- [x] Add `directory_guid` nullable column.
+- [x] Add `directory_domain` nullable column.
+- [x] Add `directory_username` nullable column.
+- [x] Add `directory_dn` nullable column.
+- [x] Add `directory_synced_at` nullable column.
+- [x] Add indexes for `auth_provider`, `directory_guid`, and `directory_username`.
+- [x] Update the default admin seeder to include `username`, `role`, `auth_provider`, and `is_active`.
+- [x] Update the `User` model allowed columns.
+- [x] Update login to authenticate by `username`.
+- [x] Update login to block inactive users.
+- [x] Update login to set `last_login_at`.
+- [x] Stop relying on `is_admin` in application code.
+- [x] Leave `is_admin` in place temporarily only if needed for a safe migration path.
 - [ ] Add a later cleanup task to drop `is_admin` once code no longer uses it.
 
 Recommended `users` direction:
@@ -154,8 +154,8 @@ Access rules:
 
 Purpose: move from self-signup to admin-managed accounts.
 
-- [ ] Remove signup link from navigation.
-- [ ] Block direct access to `/signup` or repurpose it behind admin-only access.
+- [x] Remove signup link from navigation.
+- [x] Block direct access to `/signup` or repurpose it behind admin-only access.
 - [ ] Add `Users` controller for admin-only user management.
 - [ ] Add admin user list page.
 - [ ] Add admin create-user page.

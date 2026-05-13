@@ -7,14 +7,49 @@ class User
 
     use Model;
 
+    public const ROLES = ['user', 'staff', 'admin'];
+    public const AUTH_PROVIDERS = ['local', 'ldap'];
+
     protected $table = 'users';
 
     protected $allowedColumns = [
         'name',
+        'username',
         'email',
         'password',
+        'role',
+        'auth_provider',
+        'is_active',
+        'must_reset_password',
+        'directory_guid',
+        'directory_domain',
+        'directory_username',
+        'directory_dn',
+        'directory_synced_at',
+        'last_login_at',
+        'created_at',
         'updated_at',
     ];
+
+    public function normalizeUsername(string $username): string
+    {
+        return strtolower(trim($username));
+    }
+
+    public function isValidUsername(string $username): bool
+    {
+        return (bool)preg_match('/^[a-zA-Z0-9._-]{3,100}$/', $username);
+    }
+
+    public function isValidRole(string $role): bool
+    {
+        return in_array($role, self::ROLES, true);
+    }
+
+    public function isValidAuthProvider(string $authProvider): bool
+    {
+        return in_array($authProvider, self::AUTH_PROVIDERS, true);
+    }
 
     public function validate($data)
     {
@@ -25,12 +60,17 @@ class User
             $this->errors['name'] = "Name is required";
         }
         else
-        if (empty($data['email']))
+        if (empty($data['username']))
         {
-            $this->errors['email'] = "Email is required";
+            $this->errors['username'] = "Username is required";
         }
         else
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL))
+        if (!$this->isValidUsername((string)$data['username']))
+        {
+            $this->errors['username'] = "Username must be 3-100 characters and only use letters, numbers, dots, dashes, or underscores";
+        }
+
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL))
         {
             $this->errors['email'] = "Enter a valid email address";
         }
@@ -40,7 +80,7 @@ class User
             $this->errors['password'] = "Password is required";
         }
 
-        if ($data['confirm'])
+        if (!empty($data['confirm']))
         {
             if ($data['confirm'] !== $data['password'])
             {
@@ -56,6 +96,23 @@ class User
         }
 
         return false;
+    }
+
+    public function validateRoleData(array $data): bool
+    {
+        $this->errors = [];
+
+        if (empty($data['role']) || !$this->isValidRole((string)$data['role']))
+        {
+            $this->errors['role'] = "Choose a valid role";
+        }
+
+        if (empty($data['auth_provider']) || !$this->isValidAuthProvider((string)$data['auth_provider']))
+        {
+            $this->errors['auth_provider'] = "Choose a valid auth provider";
+        }
+
+        return empty($this->errors);
     }
 
     public function validatePasswordChange(array $data, string $currentPasswordHash): bool

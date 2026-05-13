@@ -1,4 +1,4 @@
-.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update migrate seed db-status db-reset prune-all
+.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update test migrate seed db-status db-reset prune-all
 
 COMPOSE_BASE = docker compose
 COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
@@ -13,6 +13,7 @@ help:
 	@printf "  make down-dev      - compose down with dev override\n"
 	@printf "  make composer-install - run composer install in dev container\n"
 	@printf "  make composer-update  - run composer update in dev container\n"
+	@printf "  make test          - run PHPUnit tests in dev container\n"
 	@printf "  make migrate       - run PHP migrations in dev container\n"
 	@printf "  make seed          - run PHP seeders in dev container\n"
 	@printf "  make db-status     - print DB migration/seeder/user status\n"
@@ -42,6 +43,9 @@ composer-install:
 
 composer-update:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web composer update
+
+test:
+	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web vendor/bin/phpunit
 
 migrate:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/migrate.php

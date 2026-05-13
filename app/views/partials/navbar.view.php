@@ -64,16 +64,6 @@
                         hx-swap="innerHTML"
                         hx-push-url="true"
                         <?= $url === 'login' ? 'aria-current="page"' : '' ?>>Login</a>
-
-                    <a href="<?= ROOT ?>/signup"
-                        x-on:click="closeMenu()"
-                        hx-get="<?= ROOT ?>/signup"
-                        hx-target="#page-content"
-                        hx-select="#page-content > *"
-                        hx-select-oob="#site-nav"
-                        hx-swap="innerHTML"
-                        hx-push-url="true"
-                        <?= $url === 'signup' ? 'aria-current="page"' : '' ?>>Signup</a>
                 <?php else: ?>
                     <a href="<?= ROOT ?>/password"
                         x-on:click="closeMenu()"
