@@ -65,6 +65,18 @@
                         hx-push-url="true"
                         <?= $url === 'login' ? 'aria-current="page"' : '' ?>>Login</a>
                 <?php else: ?>
+                    <?php if (is_admin()): ?>
+                        <a href="<?= ROOT ?>/users"
+                            x-on:click="closeMenu()"
+                            hx-get="<?= ROOT ?>/users"
+                            hx-target="#page-content"
+                            hx-select="#page-content > *"
+                            hx-select-oob="#site-nav"
+                            hx-swap="innerHTML"
+                            hx-push-url="true"
+                            <?= $url === 'users' ? 'aria-current="page"' : '' ?>>Users</a>
+                    <?php endif; ?>
+
                     <a href="<?= ROOT ?>/password"
                         x-on:click="closeMenu()"
                         hx-get="<?= ROOT ?>/password"

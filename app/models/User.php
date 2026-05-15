@@ -115,6 +115,122 @@ class User
         return empty($this->errors);
     }
 
+    public function validateAdminCreate(array $data): bool
+    {
+        $this->errors = [];
+        $this->validateAdminFields($data, true);
+
+        return empty($this->errors);
+    }
+
+    public function validateAdminUpdate(array $data): bool
+    {
+        $this->errors = [];
+        $this->validateAdminFields($data, false);
+
+        return empty($this->errors);
+    }
+
+    private function validateAdminFields(array $data, bool $passwordRequired): void
+    {
+        if (empty($data['name']))
+        {
+            $this->errors['name'] = "Name is required";
+        }
+
+        if (empty($data['username']))
+        {
+            $this->errors['username'] = "Username is required";
+        }
+        else
+        if (!$this->isValidUsername((string)$data['username']))
+        {
+            $this->errors['username'] = "Username must be 3-100 characters and only use letters, numbers, dots, dashes, or underscores";
+        }
+
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL))
+        {
+            $this->errors['email'] = "Enter a valid email address";
+        }
+
+        if (empty($data['role']) || !$this->isValidRole((string)$data['role']))
+        {
+            $this->errors['role'] = "Choose a valid role";
+        }
+
+        if (!isset($data['is_active']) || !in_array((int)$data['is_active'], [0, 1], true))
+        {
+            $this->errors['is_active'] = "Choose a valid active state";
+        }
+
+        if ($passwordRequired && empty($data['password']))
+        {
+            $this->errors['password'] = "Temporary password is required";
+        }
+
+        if (!empty($data['password']) && strlen((string)$data['password']) < 8)
+        {
+            $this->errors['password'] = "Password must be at least 8 characters";
+        }
+    }
+
+    public function findById(int $id): mixed
+    {
+        return $this->first(['id' => $id]);
+    }
+
+    public function listForAdmin(): array|bool
+    {
+        return $this->query(
+            'select id, name, username, email, role, auth_provider, is_active, must_reset_password, last_login_at, created_at, updated_at
+             from users
+             order by name asc, username asc'
+        );
+    }
+
+    public function usernameExists(string $username, int $ignoreUserId = 0): bool
+    {
+        $data = ['username' => $this->normalizeUsername($username)];
+        $query = 'select id from users where username = :username';
+
+        if ($ignoreUserId > 0)
+        {
+            $query .= ' and id != :id';
+            $data['id'] = $ignoreUserId;
+        }
+
+        return (bool)$this->get_row($query . ' limit 1', $data);
+    }
+
+    public function emailExists(string $email, int $ignoreUserId = 0): bool
+    {
+        $email = trim($email);
+        if ($email === '')
+        {
+            return false;
+        }
+
+        $data = ['email' => $email];
+        $query = 'select id from users where email = :email';
+
+        if ($ignoreUserId > 0)
+        {
+            $query .= ' and id != :id';
+            $data['id'] = $ignoreUserId;
+        }
+
+        return (bool)$this->get_row($query . ' limit 1', $data);
+    }
+
+    public function activeAdminCount(): int
+    {
+        $row = $this->get_row(
+            "select count(*) as total from users where role = 'admin' and is_active = 1"
+        );
+
+        return (int)($row->total ?? 0);
+    }
+
     public function validatePasswordChange(array $data, string $currentPasswordHash): bool
     {
         $this->errors = [];

@@ -118,37 +118,37 @@ last_login_at DATETIME NULL
 
 Purpose: keep permission checks direct and consistent.
 
-- [ ] Add `require_login()` helper.
-- [ ] Add `current_user()` helper.
-- [ ] Add `current_user_id()` helper.
-- [ ] Add `current_user_role()` helper.
-- [ ] Add `has_role(array|string $roles)` helper.
-- [ ] Add `require_role(array|string $roles)` helper.
-- [ ] Add `is_staff_or_admin()` helper.
-- [ ] Add `is_admin()` helper.
-- [ ] Add ticket ownership helper for normal users.
-- [ ] Add final-admin protection helper.
-- [ ] Redirect guests to login when accessing protected routes.
-- [ ] Return 404 or access denied for unauthorized ticket access.
+- [x] Add `require_login()` helper.
+- [x] Add `current_user()` helper.
+- [x] Add `current_user_id()` helper.
+- [x] Add `current_user_role()` helper.
+- [x] Add `has_role(array|string $roles)` helper.
+- [x] Add `require_role(array|string $roles)` helper.
+- [x] Add `is_staff_or_admin()` helper.
+- [x] Add `is_admin()` helper.
+- [x] Add ticket ownership helper for normal users.
+- [x] Add final-admin protection helper.
+- [x] Redirect guests to login when accessing protected routes.
+- [x] Return 404 or access denied for unauthorized ticket access.
 
 Access rules:
 
-- [ ] Guest users cannot access tickets.
-- [ ] `user` can create tickets.
-- [ ] `user` can view only their own tickets.
-- [ ] `user` can reply to their own non-closed tickets.
-- [ ] `user` cannot change status, priority, or assignment.
-- [ ] `staff` can view all tickets.
-- [ ] `staff` can reply to all non-closed tickets.
-- [ ] `staff` can change status except to `closed`.
-- [ ] `staff` can change priority.
-- [ ] `staff` can assign tickets.
-- [ ] `staff` cannot change roles.
-- [ ] `admin` can perform all staff actions.
-- [ ] `admin` can create users.
-- [ ] `admin` can update users.
-- [ ] `admin` can change roles.
-- [ ] `admin` cannot demote or deactivate the final active admin.
+- [ ] Guest users cannot access tickets. Helper exists; enforce when ticket routes are added.
+- [ ] `user` can create tickets. Enforce when ticket routes are added.
+- [ ] `user` can view only their own tickets. Helper exists; enforce when ticket routes are added.
+- [ ] `user` can reply to their own non-closed tickets. Enforce when ticket routes are added.
+- [ ] `user` cannot change status, priority, or assignment. Enforce when ticket routes are added.
+- [ ] `staff` can view all tickets. Helper exists; enforce when ticket routes are added.
+- [ ] `staff` can reply to all non-closed tickets. Enforce when ticket routes are added.
+- [ ] `staff` can change status except to `closed`. Enforce when ticket routes are added.
+- [ ] `staff` can change priority. Enforce when ticket routes are added.
+- [ ] `staff` can assign tickets. Enforce when ticket routes are added.
+- [ ] `staff` cannot change roles. Enforce when admin user routes are added.
+- [ ] `admin` can perform all staff actions. Helper exists; enforce when routes are added.
+- [ ] `admin` can create users. Enforce when admin user routes are added.
+- [ ] `admin` can update users. Enforce when admin user routes are added.
+- [ ] `admin` can change roles. Enforce when admin user routes are added.
+- [ ] `admin` cannot demote or deactivate the final active admin. Helper exists; enforce when admin user routes are added.
 
 ## Phase 3 - Disable Public Signup And Add Admin User Management
 
@@ -156,21 +156,21 @@ Purpose: move from self-signup to admin-managed accounts.
 
 - [x] Remove signup link from navigation.
 - [x] Block direct access to `/signup` or repurpose it behind admin-only access.
-- [ ] Add `Users` controller for admin-only user management.
-- [ ] Add admin user list page.
-- [ ] Add admin create-user page.
-- [ ] Add admin edit-user page.
-- [ ] Admin can set username.
-- [ ] Admin can set email/contact details.
-- [ ] Admin can set temporary password for local users.
-- [ ] New admin-created local users get `must_reset_password = 1`.
-- [ ] Admin can set role.
-- [ ] Admin can activate/deactivate users.
-- [ ] Admin can reset a local user's password.
-- [ ] Admin cannot reset LDAP user passwords once LDAP support exists.
-- [ ] Admin cannot deactivate final active admin.
-- [ ] Admin cannot demote final active admin.
-- [ ] User list displays username, name, email, role, auth provider, active state, and last login.
+- [x] Add `Users` controller for admin-only user management.
+- [x] Add admin user list page.
+- [x] Add admin create-user page.
+- [x] Add admin edit-user page.
+- [x] Admin can set username.
+- [x] Admin can set email/contact details.
+- [x] Admin can set temporary password for local users.
+- [x] New admin-created local users get `must_reset_password = 1`.
+- [x] Admin can set role.
+- [x] Admin can activate/deactivate users.
+- [x] Admin can reset a local user's password.
+- [x] Admin cannot reset LDAP user passwords once LDAP support exists.
+- [x] Admin cannot deactivate final active admin.
+- [x] Admin cannot demote final active admin.
+- [x] User list displays username, name, email, role, auth provider, active state, and last login.
 
 ## Phase 4 - Password Reset / Forced Password Change
 

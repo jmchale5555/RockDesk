@@ -68,6 +68,121 @@ function redirect($path)
     die;
 }
 
+function current_user(): mixed
+{
+    return $_SESSION['USER'] ?? null;
+}
+
+function current_user_id(): ?int
+{
+    $user = current_user();
+
+    if (!empty($user->id))
+    {
+        return (int)$user->id;
+    }
+
+    return null;
+}
+
+function current_user_role(): string
+{
+    $user = current_user();
+
+    if (!empty($user->role))
+    {
+        return (string)$user->role;
+    }
+
+    return 'guest';
+}
+
+function has_role(array|string $roles, mixed $user = null): bool
+{
+    $roles = is_array($roles) ? $roles : [$roles];
+    $user = $user ?? current_user();
+
+    if (empty($user->role))
+    {
+        return false;
+    }
+
+    return in_array((string)$user->role, $roles, true);
+}
+
+function is_staff_or_admin(mixed $user = null): bool
+{
+    return has_role(['staff', 'admin'], $user);
+}
+
+function is_admin(mixed $user = null): bool
+{
+    return has_role('admin', $user);
+}
+
+function require_login(): void
+{
+    if (empty(current_user()))
+    {
+        message('Please sign in to continue.');
+        redirect('login');
+    }
+}
+
+function require_role(array|string $roles): void
+{
+    require_login();
+
+    if (!has_role($roles))
+    {
+        http_response_code(403);
+        die('Access denied');
+    }
+}
+
+function can_access_ticket(mixed $ticket, mixed $user = null): bool
+{
+    $user = $user ?? current_user();
+
+    if (empty($ticket) || empty($user) || empty($user->id))
+    {
+        return false;
+    }
+
+    if (is_staff_or_admin($user))
+    {
+        return true;
+    }
+
+    return isset($ticket->user_id) && (int)$ticket->user_id === (int)$user->id;
+}
+
+function require_ticket_access(mixed $ticket): void
+{
+    require_login();
+
+    if (!can_access_ticket($ticket))
+    {
+        http_response_code(404);
+        die('Not found');
+    }
+}
+
+function is_final_active_admin(mixed $user, int $activeAdminCount): bool
+{
+    if (empty($user) || !is_admin($user))
+    {
+        return false;
+    }
+
+    if (isset($user->is_active) && (int)$user->is_active !== 1)
+    {
+        return false;
+    }
+
+    return $activeAdminCount <= 1;
+}
+
 /** load image. if not exist, load placeholder **/
 function get_image(mixed $file = '', string $type = 'post'): string
 {
