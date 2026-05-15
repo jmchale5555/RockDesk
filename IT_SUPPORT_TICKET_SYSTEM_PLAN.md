@@ -189,17 +189,17 @@ Purpose: support temporary passwords safely enough for MVP.
 
 Purpose: create ticket, comment, and audit-event tables.
 
-- [ ] Create `tickets` table.
-- [ ] Create `ticket_comments` table.
-- [ ] Create `ticket_events` table.
-- [ ] Add `Ticket` model.
-- [ ] Add `TicketComment` model.
-- [ ] Add `TicketEvent` model.
-- [ ] Add validation for ticket subject.
-- [ ] Add validation for ticket body.
-- [ ] Add validation for ticket status.
-- [ ] Add validation for ticket priority.
-- [ ] Generate human-friendly ticket numbers.
+- [x] Create `tickets` table.
+- [x] Create `ticket_comments` table.
+- [x] Create `ticket_events` table.
+- [x] Add `Ticket` model.
+- [x] Add `TicketComment` model.
+- [x] Add `TicketEvent` model.
+- [x] Add validation for ticket subject.
+- [x] Add validation for ticket body.
+- [x] Add validation for ticket status.
+- [x] Add validation for ticket priority.
+- [x] Generate human-friendly ticket numbers.
 
 Recommended `tickets` table:
 
