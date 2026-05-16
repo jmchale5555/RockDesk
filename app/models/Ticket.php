@@ -254,6 +254,16 @@ class Ticket
         return empty($this->errors);
     }
 
+    public function statusAfterStaffEngagement(string $currentStatus, string $requestedStatus, bool $hasEngagement): string
+    {
+        if ($currentStatus === 'new' && $requestedStatus === 'new' && $hasEngagement)
+        {
+            return 'open';
+        }
+
+        return $requestedStatus;
+    }
+
     public function statusUpdateData(string $oldStatus, string $newStatus): array
     {
         $now = date('Y-m-d H:i:s');

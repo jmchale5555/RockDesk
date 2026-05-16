@@ -169,6 +169,15 @@ final class TicketTest extends TestCase
         $this->assertSame('Enter a message.', $ticket->errors['message']);
     }
 
+    public function testStaffEngagementOpensNewTicketWhenStatusIsLeftNew(): void
+    {
+        $ticket = new Ticket;
+
+        $this->assertSame('open', $ticket->statusAfterStaffEngagement('new', 'new', true));
+        $this->assertSame('new', $ticket->statusAfterStaffEngagement('new', 'new', false));
+        $this->assertSame('in_progress', $ticket->statusAfterStaffEngagement('new', 'in_progress', true));
+    }
+
     public function testStatusUpdateDataSetsAndClearsResolvedAt(): void
     {
         $ticket = new Ticket;

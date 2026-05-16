@@ -262,14 +262,19 @@ class Tickets
 
         $isStaff = is_staff_or_admin();
         $body = sanitize_rich_text((string)($_POST['body'] ?? ''));
+        $plainBody = rich_text_to_plain_text($body);
+        $hasMessage = $plainBody !== '';
         $isInternal = $isStaff && !empty($_POST['is_internal']);
         $newStatus = $isStaff ? (string)($_POST['status'] ?? $row->status) : (string)$row->status;
-        $statusChanged = $isStaff && $newStatus !== (string)$row->status;
         $newPriority = $isStaff ? (string)($_POST['priority'] ?? $row->priority) : (string)$row->priority;
         $priorityChanged = $isStaff && $newPriority !== (string)$row->priority;
         $assignedTo = $isStaff ? (int)($_POST['assigned_to'] ?? (int)($row->assigned_to ?? 0)) : (int)($row->assigned_to ?? 0);
         $oldAssignedTo = (int)($row->assigned_to ?? 0);
         $assignmentChanged = $isStaff && $assignedTo !== $oldAssignedTo;
+        $newStatus = $isStaff
+            ? $ticket->statusAfterStaffEngagement((string)$row->status, $newStatus, $hasMessage || $priorityChanged || $assignmentChanged)
+            : $newStatus;
+        $statusChanged = $isStaff && $newStatus !== (string)$row->status;
         $ticketChanged = $statusChanged || $priorityChanged || $assignmentChanged;
         $formData = $this->messageFormData($body, $isInternal, $newStatus, $newPriority, $assignedTo);
 
@@ -301,8 +306,6 @@ class Tickets
             return;
         }
 
-        $plainBody = rich_text_to_plain_text($body);
-        $hasMessage = $plainBody !== '';
         $updateData = [];
 
         if ($statusChanged)

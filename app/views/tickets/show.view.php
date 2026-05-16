@@ -123,7 +123,7 @@
                     <label for="message_status">Status
                         <select name="status" id="message_status" data-message-status required>
                             <?php if (!in_array($ticket->status, Model\Ticket::STAFF_SET_STATUSES, true)): ?>
-                                <option value="<?= esc($ticket->status) ?>" <?= $selectedMessageStatus === $ticket->status ? 'selected' : '' ?>>Keep <?= esc(str_replace('_', ' ', $ticket->status)) ?></option>
+                                <option value="<?= esc($ticket->status) ?>" <?= $selectedMessageStatus === $ticket->status ? 'selected' : '' ?>><?= esc(str_replace('_', ' ', $ticket->status)) ?></option>
                             <?php endif; ?>
                             <?php foreach (Model\Ticket::STAFF_SET_STATUSES as $status): ?>
                                 <option value="<?= esc($status) ?>" <?= $selectedMessageStatus === $status ? 'selected' : '' ?>><?= esc(str_replace('_', ' ', $status)) ?></option>
