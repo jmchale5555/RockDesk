@@ -55,14 +55,40 @@
             <p><small>Password is managed by Active Directory for LDAP users.</small></p>
         <?php endif; ?>
 
-        <button type="submit">Update user</button>
-        <a href="<?= ROOT ?>/users"
-            hx-get="<?= ROOT ?>/users"
-            hx-target="#page-content"
-            hx-select="#page-content > *"
-            hx-select-oob="#site-nav"
-            hx-swap="innerHTML"
-            hx-push-url="true">Back to users</a>
+        <?php if (($user->auth_provider ?? 'local') === 'ldap'): ?>
+            <section class="directory-metadata">
+                <h2>Directory metadata</h2>
+                <dl>
+                    <dt>Domain</dt>
+                    <dd><?= esc($user->directory_domain ?: '-') ?></dd>
+
+                    <dt>Directory username</dt>
+                    <dd><?= esc($user->directory_username ?: '-') ?></dd>
+
+                    <dt>Object GUID</dt>
+                    <dd><?= esc($user->directory_guid ?: '-') ?></dd>
+
+                    <dt>Distinguished name</dt>
+                    <dd><?= esc($user->directory_dn ?: '-') ?></dd>
+
+                    <dt>Last synced</dt>
+                    <dd><?= esc($user->directory_synced_at ?: '-') ?></dd>
+                </dl>
+            </section>
+        <?php endif; ?>
+
+        <div class="form-actions">
+            <button type="submit">Update user</button>
+            <a href="<?= ROOT ?>/users"
+                role="button"
+                class="outline secondary"
+                hx-get="<?= ROOT ?>/users"
+                hx-target="#page-content"
+                hx-select="#page-content > *"
+                hx-select-oob="#site-nav"
+                hx-swap="innerHTML"
+                hx-push-url="true">Back to users</a>
+        </div>
     </form>
 </article>
 

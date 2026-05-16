@@ -8,6 +8,7 @@ RUN apt-get update \
         libfreetype6-dev \
         libicu-dev \
         libjpeg62-turbo-dev \
+        libldap2-dev \
         libonig-dev \
         libpng-dev \
         libsqlite3-dev \
@@ -18,6 +19,7 @@ RUN apt-get update \
         exif \
         gd \
         intl \
+        ldap \
         mbstring \
         mysqli \
         pdo_mysql \

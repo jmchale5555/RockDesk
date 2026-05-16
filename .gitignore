@@ -6,4 +6,5 @@ html
 vendor/
 .env
 .env.*
+!.env.example
 .phpunit.result.cache

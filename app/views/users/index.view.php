@@ -3,7 +3,7 @@
 <article>
     <header>
         <h1>Users</h1>
-        <p>Manage local application users and roles.</p>
+        <p>Manage application users, roles, and directory-linked accounts.</p>
     </header>
 
     <?php $success = message(null, true); ?>
@@ -34,6 +34,7 @@
                         <th>Email</th>
                         <th>Role</th>
                         <th>Auth</th>
+                        <th>Directory</th>
                         <th>Status</th>
                         <th>Last login</th>
                         <th>Action</th>
@@ -47,6 +48,7 @@
                             <td><?= esc($row->email ?: '-') ?></td>
                             <td><?= esc($row->role) ?></td>
                             <td><?= esc($row->auth_provider) ?></td>
+                            <td><?= esc($row->directory_domain ?: '-') ?></td>
                             <td><?= (int)$row->is_active === 1 ? 'Active' : 'Inactive' ?></td>
                             <td><?= esc($row->last_login_at ?: '-') ?></td>
                             <td>

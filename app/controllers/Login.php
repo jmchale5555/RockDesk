@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Core\LdapAuth;
 use Model\User;
 use Core\Session;
 
@@ -39,18 +40,18 @@ class Login
 
                 if (!empty($row->password) && password_verify((string)($_POST['password'] ?? ''), $row->password))
                 {
-                    $now = date('Y-m-d H:i:s');
-                    $user->update((int)$row->id, [
-                        'last_login_at' => $now,
-                        'updated_at' => $now,
-                    ]);
-                    $row->last_login_at = $now;
-                    $row->updated_at = $now;
-
-                    $session = new Session;
-                    $session->auth($row);
+                    $this->authenticateLocalUser($user, $row);
                     redirect('home');
                 }
+            }
+
+            $ldapRow = (new LdapAuth)->authenticate($arr['username'], (string)($_POST['password'] ?? ''));
+
+            if ($ldapRow)
+            {
+                $session = new Session;
+                $session->auth($ldapRow);
+                redirect('home');
             }
 
             $user->errors['username'] = "Wrong username or password";
@@ -59,5 +60,19 @@ class Login
         }
 
         $this->view('login', $data);
+    }
+
+    private function authenticateLocalUser(User $user, mixed $row): void
+    {
+        $now = date('Y-m-d H:i:s');
+        $user->update((int)$row->id, [
+            'last_login_at' => $now,
+            'updated_at' => $now,
+        ]);
+        $row->last_login_at = $now;
+        $row->updated_at = $now;
+
+        $session = new Session;
+        $session->auth($row);
     }
 }

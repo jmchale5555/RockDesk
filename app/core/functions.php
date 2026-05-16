@@ -19,6 +19,7 @@ function check_extensions()
         'curl',
         'fileinfo',
         'intl',
+        'ldap',
         'exif',
         'mbstring',
     ];

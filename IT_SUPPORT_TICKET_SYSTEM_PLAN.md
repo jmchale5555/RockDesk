@@ -412,29 +412,29 @@ Purpose: make the MVP safe enough for real internal use.
 
 Purpose: authenticate users against AD with LdapRecord and sync identity metadata locally.
 
-- [ ] Install `directorytree/ldaprecord` through Composer.
-- [ ] Add LDAP environment variables.
-- [ ] Add LDAP config loader.
-- [ ] Add LDAP auth helper/service.
-- [ ] Login attempts local auth first.
-- [ ] If local auth fails, attempt LDAP auth.
-- [ ] LDAP must use LDAPS, normally port `636`.
-- [ ] On successful LDAP auth, locate user by `directory_guid` first.
-- [ ] If no GUID match, locate by `username` or `directory_username`.
-- [ ] If no local user exists, create one automatically.
-- [ ] New LDAP users get `role = 'user'`.
-- [ ] New LDAP users get `auth_provider = 'ldap'`.
-- [ ] Sync display name.
-- [ ] Sync email if available.
-- [ ] Sync username.
-- [ ] Sync distinguished name.
-- [ ] Sync object GUID.
-- [ ] Set `directory_synced_at`.
-- [ ] Set `last_login_at`.
-- [ ] Do not save the LDAP password.
-- [ ] Do not overwrite local app role from AD in MVP.
-- [ ] Disable local password change for LDAP users.
-- [ ] Show LDAP metadata read-only in admin user UI.
+- [x] Install `directorytree/ldaprecord` through Composer.
+- [x] Add LDAP environment variables.
+- [x] Add LDAP config loader.
+- [x] Add LDAP auth helper/service.
+- [x] Login attempts local auth first.
+- [x] If local auth fails, attempt LDAP auth.
+- [x] LDAP must use LDAPS, normally port `636`.
+- [x] On successful LDAP auth, locate user by `directory_guid` first.
+- [x] If no GUID match, locate by `username` or `directory_username`.
+- [x] If no local user exists, create one automatically.
+- [x] New LDAP users get `role = 'user'`.
+- [x] New LDAP users get `auth_provider = 'ldap'`.
+- [x] Sync display name.
+- [x] Sync email if available.
+- [x] Sync username.
+- [x] Sync distinguished name.
+- [x] Sync object GUID.
+- [x] Set `directory_synced_at`.
+- [x] Set `last_login_at`.
+- [x] Do not save the LDAP password.
+- [x] Do not overwrite local app role from AD in MVP.
+- [x] Disable local password change for LDAP users.
+- [x] Show LDAP metadata read-only in admin user UI.
 
 Recommended LDAP env names:
 
@@ -445,8 +445,11 @@ LDAP_BASE_DN=
 LDAP_USERNAME=
 LDAP_PASSWORD=
 LDAP_USE_SSL=true
+LDAP_USE_TLS=false
 LDAP_TIMEOUT=5
 LDAP_DOMAIN=
+LDAP_USER_FILTER_ATTRIBUTE=samaccountname
+LDAP_TLS_REQUIRE_CERT=true
 ```
 
 ## Phase 13 - Post-MVP Improvements

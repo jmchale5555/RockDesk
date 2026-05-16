@@ -202,9 +202,43 @@ class User
     public function listForAdmin(): array|bool
     {
         return $this->query(
-            'select id, name, username, email, role, auth_provider, is_active, must_reset_password, last_login_at, created_at, updated_at
+            'select id, name, username, email, role, auth_provider, is_active, must_reset_password,
+                    directory_guid, directory_domain, directory_username, directory_dn, directory_synced_at,
+                    last_login_at, created_at, updated_at
              from users
              order by name asc, username asc'
+        );
+    }
+
+    public function findByDirectoryGuid(string $directoryGuid): mixed
+    {
+        $directoryGuid = trim($directoryGuid);
+
+        if ($directoryGuid === '')
+        {
+            return false;
+        }
+
+        return $this->get_row(
+            'select * from users where directory_guid = :directory_guid limit 1',
+            ['directory_guid' => $directoryGuid]
+        );
+    }
+
+    public function findByDirectoryUsernameOrUsername(string $directoryUsername, string $username): mixed
+    {
+        $directoryUsername = $this->normalizeUsername($directoryUsername);
+        $username = $this->normalizeUsername($username);
+
+        return $this->get_row(
+            'select * from users
+             where directory_username = :directory_username
+                or username = :username
+             limit 1',
+            [
+                'directory_username' => $directoryUsername,
+                'username' => $username,
+            ]
         );
     }
 

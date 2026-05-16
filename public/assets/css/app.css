@@ -268,3 +268,32 @@
     color: var(--pico-muted-color);
     font-weight: 400;
 }
+
+.directory-metadata {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: calc(var(--pico-border-radius) * 1.5);
+    background: var(--pico-card-sectioning-background-color, rgba(127, 127, 127, 0.08));
+}
+
+.directory-metadata h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.directory-metadata dl {
+    margin-bottom: 0;
+}
+
+.directory-metadata dt {
+    color: var(--pico-muted-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.directory-metadata dd {
+    margin-bottom: 0.5rem;
+    overflow-wrap: anywhere;
+}

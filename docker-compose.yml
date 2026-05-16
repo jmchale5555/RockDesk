@@ -16,6 +16,18 @@ services:
       DB_NAME: ${DB_NAME:-phpmon}
       DB_USER: ${DB_USER:-phpmon}
       DB_PASS: ${DB_PASS:-phpmon}
+      LDAP_ENABLED: ${LDAP_ENABLED:-false}
+      LDAP_HOST: ${LDAP_HOST:-}
+      LDAP_PORT: ${LDAP_PORT:-636}
+      LDAP_BASE_DN: ${LDAP_BASE_DN:-}
+      LDAP_USERNAME: ${LDAP_USERNAME:-}
+      LDAP_PASSWORD: ${LDAP_PASSWORD:-}
+      LDAP_USE_SSL: ${LDAP_USE_SSL:-true}
+      LDAP_USE_TLS: ${LDAP_USE_TLS:-false}
+      LDAP_TIMEOUT: ${LDAP_TIMEOUT:-5}
+      LDAP_DOMAIN: ${LDAP_DOMAIN:-}
+      LDAP_USER_FILTER_ATTRIBUTE: ${LDAP_USER_FILTER_ATTRIBUTE:-samaccountname}
+      LDAP_TLS_REQUIRE_CERT: ${LDAP_TLS_REQUIRE_CERT:-true}
     ports:
       - "8080:80"
 
