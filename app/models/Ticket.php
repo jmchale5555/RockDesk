@@ -226,7 +226,7 @@ class Ticket
         return empty($this->errors);
     }
 
-    public function validateMessageComposer(string $status, string $body, bool $isInternal, bool $statusChanged): bool
+    public function validateMessageComposer(string $status, string $body, bool $isInternal, bool $ticketChanged): bool
     {
         $this->errors = [];
         $plainBody = rich_text_to_plain_text($body);
@@ -241,7 +241,7 @@ class Ticket
             $this->errors['message'] = 'Resolution text is required when resolving a ticket.';
         }
         else
-        if (!$statusChanged && $plainBody === '')
+        if (!$ticketChanged && $plainBody === '')
         {
             $this->errors['message'] = 'Enter a message.';
         }

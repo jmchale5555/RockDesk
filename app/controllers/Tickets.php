@@ -265,26 +265,69 @@ class Tickets
         $isInternal = $isStaff && !empty($_POST['is_internal']);
         $newStatus = $isStaff ? (string)($_POST['status'] ?? $row->status) : (string)$row->status;
         $statusChanged = $isStaff && $newStatus !== (string)$row->status;
+        $newPriority = $isStaff ? (string)($_POST['priority'] ?? $row->priority) : (string)$row->priority;
+        $priorityChanged = $isStaff && $newPriority !== (string)$row->priority;
+        $assignedTo = $isStaff ? (int)($_POST['assigned_to'] ?? (int)($row->assigned_to ?? 0)) : (int)($row->assigned_to ?? 0);
+        $oldAssignedTo = (int)($row->assigned_to ?? 0);
+        $assignmentChanged = $isStaff && $assignedTo !== $oldAssignedTo;
+        $ticketChanged = $statusChanged || $priorityChanged || $assignmentChanged;
+        $formData = $this->messageFormData($body, $isInternal, $newStatus, $newPriority, $assignedTo);
 
         if ($isStaff && $statusChanged && !$ticket->validateStatus($newStatus, true))
         {
-            $this->renderShowWithErrors($row, $ticket->errors, $this->messageFormData($body, $isInternal, $newStatus));
+            $this->renderShowWithErrors($row, $ticket->errors, $formData);
             return;
         }
 
-        if (!$ticket->validateMessageComposer($newStatus, $body, $isInternal, $statusChanged))
+        if ($isStaff && $priorityChanged && !$ticket->validatePriority($newPriority))
         {
-            $this->renderShowWithErrors($row, $ticket->errors, $this->messageFormData($body, $isInternal, $newStatus));
+            $this->renderShowWithErrors($row, $ticket->errors, $formData);
+            return;
+        }
+
+        if ($isStaff && $assignmentChanged)
+        {
+            $user = new User;
+            if ($assignedTo > 0 && !$user->isAssignableStaff($assignedTo))
+            {
+                $this->renderShowWithErrors($row, ['assigned_to' => 'Choose an active staff or admin user'], $formData);
+                return;
+            }
+        }
+
+        if (!$ticket->validateMessageComposer($newStatus, $body, $isInternal, $ticketChanged))
+        {
+            $this->renderShowWithErrors($row, $ticket->errors, $formData);
             return;
         }
 
         $plainBody = rich_text_to_plain_text($body);
         $hasMessage = $plainBody !== '';
+        $updateData = [];
 
         if ($statusChanged)
         {
-            $ticket->update((int)$row->id, $ticket->statusUpdateData((string)$row->status, $newStatus));
+            $updateData = array_merge($updateData, $ticket->statusUpdateData((string)$row->status, $newStatus));
             $this->recordEvent((int)$row->id, 'status_changed', (string)$row->status, $newStatus, $newStatus === 'resolved' ? $body : null);
+        }
+
+        if ($priorityChanged)
+        {
+            $updateData['priority'] = $newPriority;
+            $updateData['updated_at'] = date('Y-m-d H:i:s');
+            $this->recordEvent((int)$row->id, 'priority_changed', (string)$row->priority, $newPriority);
+        }
+
+        if ($assignmentChanged)
+        {
+            $updateData['assigned_to'] = $assignedTo > 0 ? $assignedTo : null;
+            $updateData['updated_at'] = date('Y-m-d H:i:s');
+            $this->recordEvent((int)$row->id, 'assigned', (string)($row->assigned_to ?? ''), $assignedTo > 0 ? (string)$assignedTo : '');
+        }
+
+        if (!empty($updateData))
+        {
+            $ticket->update((int)$row->id, $updateData);
         }
 
         if ($hasMessage)
@@ -300,7 +343,7 @@ class Tickets
 
             if (!$comment->validateCreate($commentData))
             {
-                $this->renderShowWithErrors($row, $comment->errors, $this->messageFormData($body, $isInternal, $newStatus));
+                $this->renderShowWithErrors($row, $comment->errors, $formData);
                 return;
             }
 
@@ -326,7 +369,7 @@ class Tickets
             );
         }
 
-        message($this->messageSuccessText($hasMessage, $statusChanged));
+        message($this->messageSuccessText($hasMessage, $ticketChanged));
         redirect('tickets/show/' . (int)$row->id);
     }
 
@@ -629,25 +672,37 @@ class Tickets
         ]);
     }
 
-    private function messageFormData(string $body, bool $isInternal, string $status): array
+    private function messageFormData(string $body, bool $isInternal, string $status, ?string $priority = null, ?int $assignedTo = null): array
     {
-        return [
+        $data = [
             'body' => $body,
             'is_internal' => $isInternal ? '1' : '0',
             'status' => $status,
         ];
+
+        if ($priority !== null)
+        {
+            $data['priority'] = $priority;
+        }
+
+        if ($assignedTo !== null)
+        {
+            $data['assigned_to'] = (string)$assignedTo;
+        }
+
+        return $data;
     }
 
-    private function messageSuccessText(bool $hasMessage, bool $statusChanged): string
+    private function messageSuccessText(bool $hasMessage, bool $ticketChanged): string
     {
-        if ($hasMessage && $statusChanged)
+        if ($hasMessage && $ticketChanged)
         {
             return 'Ticket updated and message added.';
         }
 
-        if ($statusChanged)
+        if ($ticketChanged)
         {
-            return 'Ticket status updated.';
+            return 'Ticket updated.';
         }
 
         return 'Message added successfully.';

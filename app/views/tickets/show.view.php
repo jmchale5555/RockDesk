@@ -103,6 +103,8 @@
         <?php
             $messageBody = $formData['body'] ?? old_value('body');
             $selectedMessageStatus = $formData['status'] ?? $ticket->status;
+            $selectedPriority = $formData['priority'] ?? $ticket->priority;
+            $selectedAssignedTo = (int)($formData['assigned_to'] ?? (int)($ticket->assigned_to ?? 0));
             $messageIsInternal = ($formData['is_internal'] ?? '0') === '1';
             $messageError = $errors['message'] ?? '';
         ?>
@@ -117,15 +119,35 @@
             <?= csrf_field() ?>
 
             <?php if (is_staff_or_admin()): ?>
-                <label for="message_status">Status</label>
-                <select name="status" id="message_status" data-message-status required>
-                    <?php if (!in_array($ticket->status, Model\Ticket::STAFF_SET_STATUSES, true)): ?>
-                        <option value="<?= esc($ticket->status) ?>" <?= $selectedMessageStatus === $ticket->status ? 'selected' : '' ?>>Keep <?= esc(str_replace('_', ' ', $ticket->status)) ?></option>
-                    <?php endif; ?>
-                    <?php foreach (Model\Ticket::STAFF_SET_STATUSES as $status): ?>
-                        <option value="<?= esc($status) ?>" <?= $selectedMessageStatus === $status ? 'selected' : '' ?>><?= esc(str_replace('_', ' ', $status)) ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="ticket-control-row">
+                    <label for="message_status">Status
+                        <select name="status" id="message_status" data-message-status required>
+                            <?php if (!in_array($ticket->status, Model\Ticket::STAFF_SET_STATUSES, true)): ?>
+                                <option value="<?= esc($ticket->status) ?>" <?= $selectedMessageStatus === $ticket->status ? 'selected' : '' ?>>Keep <?= esc(str_replace('_', ' ', $ticket->status)) ?></option>
+                            <?php endif; ?>
+                            <?php foreach (Model\Ticket::STAFF_SET_STATUSES as $status): ?>
+                                <option value="<?= esc($status) ?>" <?= $selectedMessageStatus === $status ? 'selected' : '' ?>><?= esc(str_replace('_', ' ', $status)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+
+                    <label for="priority">Priority
+                        <select name="priority" id="priority" required>
+                            <?php foreach (Model\Ticket::PRIORITIES as $priority): ?>
+                                <option value="<?= esc($priority) ?>" <?= $selectedPriority === $priority ? 'selected' : '' ?>><?= esc($priority) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+
+                    <label for="assigned_to">Assigned staff
+                        <select name="assigned_to" id="assigned_to">
+                            <option value="0">Unassigned</option>
+                            <?php foreach ($staffUsers as $staff): ?>
+                                <option value="<?= (int)$staff->id ?>" <?= $selectedAssignedTo === (int)$staff->id ? 'selected' : '' ?>><?= esc($staff->name) ?> (<?= esc($staff->username) ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </div>
             <?php endif; ?>
 
             <label for="body">Message</label>
@@ -143,7 +165,7 @@
             <?php endif; ?>
 
             <div class="form-actions">
-                <button type="submit"><?= is_staff_or_admin() ? 'Update ticket' : 'Add reply' ?></button>
+                <button type="submit"><?= is_staff_or_admin() ? 'Update Ticket' : 'Add reply' ?></button>
             </div>
         </form>
 
@@ -164,54 +186,6 @@
         </details>
     <?php endif; ?>
 
-    <?php if (is_staff_or_admin()): ?>
-        <hr>
-
-        <h2>Staff controls</h2>
-
-        <div class="staff-control-grid">
-            <form method="post" action="<?= ROOT ?>/tickets/priority/<?= (int)$ticket->id ?>"
-                hx-post="<?= ROOT ?>/tickets/priority/<?= (int)$ticket->id ?>"
-                hx-target="#page-content"
-                hx-select="#page-content > *"
-                hx-select-oob="#site-nav"
-                hx-swap="innerHTML">
-                <?= csrf_field() ?>
-
-                <label for="priority">Priority</label>
-                <select name="priority" id="priority" required>
-                    <?php foreach (Model\Ticket::PRIORITIES as $priority): ?>
-                        <option value="<?= esc($priority) ?>" <?= $ticket->priority === $priority ? 'selected' : '' ?>><?= esc($priority) ?></option>
-                    <?php endforeach; ?>
-                </select>
-
-                <div class="form-actions">
-                    <button type="submit">Update priority</button>
-                </div>
-            </form>
-
-            <form method="post" action="<?= ROOT ?>/tickets/assign/<?= (int)$ticket->id ?>"
-                hx-post="<?= ROOT ?>/tickets/assign/<?= (int)$ticket->id ?>"
-                hx-target="#page-content"
-                hx-select="#page-content > *"
-                hx-select-oob="#site-nav"
-                hx-swap="innerHTML">
-                <?= csrf_field() ?>
-
-                <label for="assigned_to">Assigned staff</label>
-                <select name="assigned_to" id="assigned_to">
-                    <option value="0">Unassigned</option>
-                    <?php foreach ($staffUsers as $staff): ?>
-                        <option value="<?= (int)$staff->id ?>" <?= (int)($ticket->assigned_to ?? 0) === (int)$staff->id ? 'selected' : '' ?>><?= esc($staff->name) ?> (<?= esc($staff->username) ?>)</option>
-                    <?php endforeach; ?>
-                </select>
-
-                <div class="form-actions">
-                    <button type="submit">Update assignment</button>
-                </div>
-            </form>
-        </div>
-    <?php endif; ?>
 </article>
 
 <?php include __DIR__ . '/../partials/footer.view.php' ?>

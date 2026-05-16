@@ -225,13 +225,13 @@
     min-width: 7.25rem;
 }
 
-.staff-control-grid {
+.ticket-control-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: 0.75rem;
 }
 
-.staff-control-grid form {
+.ticket-control-row label {
     margin-bottom: 0;
 }
 
