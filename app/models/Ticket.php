@@ -265,6 +265,30 @@ class Ticket
         return $data;
     }
 
+    public function listResolvedReadyToClose(int $days): array|bool
+    {
+        return $this->query(
+            'select *
+             from tickets
+             where status = :status
+               and resolved_at is not null
+               and resolved_at <= date_sub(now(), interval ' . max(1, $days) . ' day)
+             order by resolved_at asc',
+            ['status' => 'resolved']
+        );
+    }
+
+    public function autoCloseUpdateData(): array
+    {
+        $now = date('Y-m-d H:i:s');
+
+        return [
+            'status' => 'closed',
+            'closed_at' => $now,
+            'updated_at' => $now,
+        ];
+    }
+
     public function generateTicketNumber(int $nextId, ?int $year = null): string
     {
         $year = $year ?: (int)date('Y');

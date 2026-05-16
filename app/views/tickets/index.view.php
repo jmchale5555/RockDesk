@@ -1,6 +1,6 @@
 <?php include __DIR__ . '/../partials/header.view.php' ?>
 
-<article>
+<article id="ticket-list">
     <header>
         <h1><?= !empty($isStaffQueue) ? 'Ticket queue' : 'My tickets' ?></h1>
         <p><?= !empty($isStaffQueue) ? 'All submitted support tickets.' : 'Track your submitted support tickets.' ?></p>
@@ -23,7 +23,13 @@
     </p>
 
     <?php if (!empty($isStaffQueue)): ?>
-        <form method="get" action="<?= ROOT ?>/tickets">
+        <form method="get" action="<?= ROOT ?>/tickets"
+            hx-get="<?= ROOT ?>/tickets"
+            hx-target="#page-content"
+            hx-select="#page-content > *"
+            hx-select-oob="#site-nav"
+            hx-swap="innerHTML"
+            hx-push-url="true">
             <div class="grid">
                 <label for="status">Status
                     <select name="status" id="status">

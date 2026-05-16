@@ -1,6 +1,6 @@
 <?php include __DIR__ . '/../partials/header.view.php' ?>
 
-<article>
+<article id="ticket-detail">
     <header>
         <p><a href="<?= ROOT ?>/tickets"
                 hx-get="<?= ROOT ?>/tickets"
@@ -68,7 +68,12 @@
     <?php if ($ticket->status === 'closed'): ?>
         <p><mark>This ticket is closed and read-only.</mark></p>
     <?php else: ?>
-        <form method="post" action="<?= ROOT ?>/tickets/reply/<?= (int)$ticket->id ?>">
+        <form method="post" action="<?= ROOT ?>/tickets/reply/<?= (int)$ticket->id ?>"
+            hx-post="<?= ROOT ?>/tickets/reply/<?= (int)$ticket->id ?>"
+            hx-target="#page-content"
+            hx-select="#page-content > *"
+            hx-select-oob="#site-nav"
+            hx-swap="innerHTML">
             <label for="body">Add reply</label>
             <textarea name="body" id="body" rows="5" required><?= esc(old_value('body')) ?></textarea>
             <button type="submit">Add reply</button>
@@ -80,7 +85,12 @@
 
         <h2>Staff controls</h2>
 
-        <form method="post" action="<?= ROOT ?>/tickets/status/<?= (int)$ticket->id ?>">
+        <form method="post" action="<?= ROOT ?>/tickets/status/<?= (int)$ticket->id ?>"
+            hx-post="<?= ROOT ?>/tickets/status/<?= (int)$ticket->id ?>"
+            hx-target="#page-content"
+            hx-select="#page-content > *"
+            hx-select-oob="#site-nav"
+            hx-swap="innerHTML">
             <label for="status">Status</label>
             <select name="status" id="status" required>
                 <?php foreach (Model\Ticket::STAFF_SET_STATUSES as $status): ?>
@@ -94,7 +104,12 @@
             <button type="submit">Update status</button>
         </form>
 
-        <form method="post" action="<?= ROOT ?>/tickets/priority/<?= (int)$ticket->id ?>">
+        <form method="post" action="<?= ROOT ?>/tickets/priority/<?= (int)$ticket->id ?>"
+            hx-post="<?= ROOT ?>/tickets/priority/<?= (int)$ticket->id ?>"
+            hx-target="#page-content"
+            hx-select="#page-content > *"
+            hx-select-oob="#site-nav"
+            hx-swap="innerHTML">
             <label for="priority">Priority</label>
             <select name="priority" id="priority" required>
                 <?php foreach (Model\Ticket::PRIORITIES as $priority): ?>
@@ -105,7 +120,12 @@
             <button type="submit">Update priority</button>
         </form>
 
-        <form method="post" action="<?= ROOT ?>/tickets/assign/<?= (int)$ticket->id ?>">
+        <form method="post" action="<?= ROOT ?>/tickets/assign/<?= (int)$ticket->id ?>"
+            hx-post="<?= ROOT ?>/tickets/assign/<?= (int)$ticket->id ?>"
+            hx-target="#page-content"
+            hx-select="#page-content > *"
+            hx-select-oob="#site-nav"
+            hx-swap="innerHTML">
             <label for="assigned_to">Assigned staff</label>
             <select name="assigned_to" id="assigned_to">
                 <option value="0">Unassigned</option>

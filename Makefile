@@ -1,4 +1,4 @@
-.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update test migrate seed db-status db-reset prune-all
+.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update test migrate seed close-resolved db-status db-reset prune-all
 
 COMPOSE_BASE = docker compose
 COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
@@ -16,6 +16,7 @@ help:
 	@printf "  make test          - run PHPUnit tests in dev container\n"
 	@printf "  make migrate       - run PHP migrations in dev container\n"
 	@printf "  make seed          - run PHP seeders in dev container\n"
+	@printf "  make close-resolved - auto-close resolved tickets past the configured window\n"
 	@printf "  make db-status     - print DB migration/seeder/user status\n"
 	@printf "  make db-reset      - drop/recreate DB, then migrate + seed (dev)\n"
 	@printf "  make prune-all     - docker system prune -a --volumes (destructive)\n"
@@ -52,6 +53,9 @@ migrate:
 
 seed:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/seed.php
+
+close-resolved:
+	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/close-resolved-tickets.php
 
 db-status:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/db-status.php

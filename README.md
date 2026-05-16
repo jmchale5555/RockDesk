@@ -22,6 +22,7 @@ Run these from the project root:
 - `make composer-update` - run `composer update` in dev container (writes to host via bind mount)
 - `make migrate` - run PHP migrations in dev container
 - `make seed` - run PHP seeders in dev container
+- `make close-resolved` - auto-close tickets resolved longer than `TICKET_AUTO_CLOSE_DAYS` days
 - `make db-status` - print migration/seeder/user table status from dev DB
 - `make db-reset` - drop/recreate dev database, then run migrations + seeders
 - `make prune-all` - run `docker system prune -a --volumes` (destructive)
@@ -47,6 +48,12 @@ Run these from the project root:
 - Run `make db-status` to check whether migration/seeder tables and users table are present.
 - Run `make db-reset` to rebuild the dev database from scratch.
 - Initial seeder creates `admin@example.com` with password `password` (change after first login in real projects).
+
+## Ticket maintenance
+
+- Resolved tickets auto-close after `TICKET_AUTO_CLOSE_DAYS` days; default is `14`.
+- Run `make close-resolved` to close eligible tickets manually in development.
+- In production, run `php scripts/close-resolved-tickets.php` from cron, for example once per day.
 
 ## Running without Docker
 

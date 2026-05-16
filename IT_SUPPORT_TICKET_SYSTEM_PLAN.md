@@ -359,16 +359,16 @@ Purpose: turn tickets into support conversations.
 
 Purpose: close resolved tickets automatically after 14 days.
 
-- [ ] Add config value for auto-close days with default `14`.
-- [ ] Add `scripts/close-resolved-tickets.php`.
-- [ ] Query tickets where `status = 'resolved'`.
-- [ ] Find tickets where `resolved_at <= NOW() - INTERVAL 14 DAY`.
-- [ ] Set status to `closed`.
-- [ ] Set `closed_at = NOW()`.
-- [ ] Update `updated_at`.
-- [ ] Create ticket event with `event_type = 'closed_automatically'`.
-- [ ] Add Make target for the script.
-- [ ] Document cron usage.
+- [x] Add config value for auto-close days with default `14`.
+- [x] Add `scripts/close-resolved-tickets.php`.
+- [x] Query tickets where `status = 'resolved'`.
+- [x] Find tickets where `resolved_at <= NOW() - INTERVAL 14 DAY`.
+- [x] Set status to `closed`.
+- [x] Set `closed_at = NOW()`.
+- [x] Update `updated_at`.
+- [x] Create ticket event with `event_type = 'closed_automatically'`.
+- [x] Add Make target for the script.
+- [x] Document cron usage.
 
 Future settings-page extension:
 
@@ -381,12 +381,12 @@ Future settings-page extension:
 
 Purpose: improve UX without changing the server-rendered architecture.
 
-- [ ] Keep all forms working as normal full-page POSTs first.
-- [ ] Add HTMX ticket-list filtering after basic filters work.
-- [ ] Add HTMX comment submission after normal reply works.
-- [ ] Add HTMX status/priority/assignment updates after normal POSTs work.
-- [ ] Return server-rendered fragments only.
-- [ ] Keep browser history usable for list/detail pages.
+- [x] Keep all forms working as normal full-page POSTs first.
+- [x] Add HTMX ticket-list filtering after basic filters work.
+- [x] Add HTMX comment submission after normal reply works.
+- [x] Add HTMX status/priority/assignment updates after normal POSTs work.
+- [x] Return server-rendered fragments only.
+- [x] Keep browser history usable for list/detail pages.
 
 ## Phase 11 - Security And Hardening
 

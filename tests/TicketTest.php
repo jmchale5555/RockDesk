@@ -147,6 +147,18 @@ final class TicketTest extends TestCase
         $this->assertArrayNotHasKey('resolved_at', $staffData);
     }
 
+    public function testAutoCloseUpdateDataClosesTicketAndSetsTimestamps(): void
+    {
+        $ticket = new Ticket;
+        $data = $ticket->autoCloseUpdateData();
+
+        $this->assertSame('closed', $data['status']);
+        $this->assertArrayHasKey('closed_at', $data);
+        $this->assertArrayHasKey('updated_at', $data);
+        $this->assertNotEmpty($data['closed_at']);
+        $this->assertNotEmpty($data['updated_at']);
+    }
+
     public function testTicketNumberUsesHumanFriendlyFormat(): void
     {
         $ticket = new Ticket;
@@ -187,6 +199,11 @@ final class TicketTest extends TestCase
         $this->assertTrue($event->validateCreate([
             'ticket_id' => 4,
             'event_type' => 'created',
+        ]));
+
+        $this->assertTrue($event->validateCreate([
+            'ticket_id' => 4,
+            'event_type' => 'closed_automatically',
         ]));
 
         $this->assertFalse($event->validateCreate([

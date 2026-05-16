@@ -10,6 +10,7 @@ $appUrl = getenv('APP_URL') ?: 'http://localhost:8080';
 $appName = getenv('APP_NAME') ?: 'My Sandbox';
 $appDesc = getenv('APP_DESC') ?: 'Default edit me';
 $debugMode = filter_var(getenv('DEBUG_MODE') ?: 'true', FILTER_VALIDATE_BOOLEAN);
+$ticketAutoCloseDays = (int)(getenv('TICKET_AUTO_CLOSE_DAYS') ?: 14);
 
 define('DBNAME', $dbName);
 define('DBHOST', $dbHost);
@@ -23,3 +24,4 @@ define('APP_NAME', $appName);
 define('APP_DESC', $appDesc);
 
 define('DEBUG_MODE', $debugMode);
+define('TICKET_AUTO_CLOSE_DAYS', max(1, $ticketAutoCloseDays));
