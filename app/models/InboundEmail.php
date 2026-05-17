@@ -27,4 +27,15 @@ class InboundEmail
     {
         return in_array($status, ['pending', 'processed', 'ignored', 'failed'], true) ? $status : 'pending';
     }
+
+    public function findByMessageId(string $messageId): mixed
+    {
+        $messageId = trim($messageId, " <>\t\n\r\0\x0B");
+        if ($messageId === '')
+        {
+            return false;
+        }
+
+        return $this->first(['message_id' => $messageId]);
+    }
 }

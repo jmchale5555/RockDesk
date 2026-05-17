@@ -17,6 +17,7 @@ class TicketEvent
         'reopened_by_user_reply',
         'internal_note_added',
         'attachment_uploaded',
+        'email_imported',
     ];
 
     protected $table = 'ticket_events';

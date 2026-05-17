@@ -19,6 +19,7 @@ require_once __DIR__ . '/../app/core/TicketNotifier.php';
 require_once __DIR__ . '/../app/core/InboundMessage.php';
 require_once __DIR__ . '/../app/core/InboundMailInspector.php';
 require_once __DIR__ . '/../app/core/InboundMailCleaner.php';
+require_once __DIR__ . '/../app/core/InboundTicketImporter.php';
 require_once __DIR__ . '/../app/models/User.php';
 require_once __DIR__ . '/../app/models/InboundEmail.php';
 require_once __DIR__ . '/../app/models/Ticket.php';

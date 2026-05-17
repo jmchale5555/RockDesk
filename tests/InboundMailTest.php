@@ -3,6 +3,8 @@
 use Core\InboundMailCleaner;
 use Core\InboundMailInspector;
 use Core\InboundMessage;
+use Core\InboundTicketImporter;
+use Model\Ticket;
 use Model\InboundEmail;
 use PHPUnit\Framework\TestCase;
 
@@ -103,5 +105,56 @@ final class InboundMailTest extends TestCase
 
         $this->assertSame('processed', $email->normalizeStatus('processed'));
         $this->assertSame('pending', $email->normalizeStatus('unknown'));
+    }
+
+    public function testImporterExtractsReplyTokenFromPlusAddress(): void
+    {
+        $token = '1234567890abcdef1234567890abcdef';
+        $importer = new InboundTicketImporter;
+        $message = InboundMessage::fromArray([
+            'from_email' => 'user@example.com',
+            'to' => ['support+' . $token . '@example.com'],
+        ]);
+
+        $this->assertSame($token, $importer->extractReplyToken($message));
+    }
+
+    public function testImporterExtractsReplyTokenFromBodyFallback(): void
+    {
+        $token = 'abcdefabcdefabcdefabcdefabcdefab';
+        $importer = new InboundTicketImporter;
+        $message = InboundMessage::fromArray([
+            'from_email' => 'user@example.com',
+            'html_body' => '<p>Reply</p><!-- rockdesk-ticket-token: ' . $token . ' -->',
+        ]);
+
+        $this->assertSame($token, $importer->extractReplyToken($message));
+    }
+
+    public function testImporterPrefersCleanedPlainTextBody(): void
+    {
+        $importer = new InboundTicketImporter;
+        $message = InboundMessage::fromArray([
+            'from_email' => 'user@example.com',
+            'text_body' => "Current reply\n\nOn Sun, Support wrote:\n> Old reply",
+            'html_body' => '<p>HTML body</p>',
+        ]);
+
+        $body = $importer->messageBody($message);
+
+        $this->assertStringContainsString('Current reply', $body);
+        $this->assertStringNotContainsString('Old reply', $body);
+        $this->assertStringNotContainsString('HTML body', $body);
+    }
+
+    public function testTicketEmailCreateDataStoresPendingRequesterDetails(): void
+    {
+        $ticket = new Ticket;
+        $data = $ticket->makeEmailCreateData(99, 'Email issue', '<p>Help</p>', 'TCK-2026-999999', 'Email Sender', 'SENDER@EXAMPLE.COM', true);
+
+        $this->assertSame('email', $data['source']);
+        $this->assertSame('Email Sender', $data['email_requester_name']);
+        $this->assertSame('sender@example.com', $data['email_requester_email']);
+        $this->assertSame(1, $data['is_pending_requester']);
     }
 }

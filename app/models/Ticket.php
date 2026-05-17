@@ -20,6 +20,10 @@ class Ticket
         'assigned_to',
         'subject',
         'body',
+        'source',
+        'email_requester_name',
+        'email_requester_email',
+        'is_pending_requester',
         'status',
         'priority',
         'created_at',
@@ -53,6 +57,10 @@ class Ticket
             'assigned_to' => null,
             'subject' => trim($subject),
             'body' => sanitize_rich_text($body),
+            'source' => 'web',
+            'email_requester_name' => null,
+            'email_requester_email' => null,
+            'is_pending_requester' => 0,
             'status' => 'new',
             'priority' => 'normal',
             'created_at' => $now,
@@ -63,7 +71,9 @@ class Ticket
     public function listForUser(int $userId): array|bool
     {
         return $this->query(
-            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+            'select tickets.*, users.username as requester_username,
+                    coalesce(tickets.email_requester_name, users.name) as requester_name,
+                    coalesce(tickets.email_requester_email, users.email) as requester_email,
                     assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
@@ -119,7 +129,9 @@ class Ticket
         $whereSql = empty($where) ? '' : ' where ' . implode(' and ', $where);
 
         return $this->query(
-            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+            'select tickets.*, users.username as requester_username,
+                    coalesce(tickets.email_requester_name, users.name) as requester_name,
+                    coalesce(tickets.email_requester_email, users.email) as requester_email,
                     assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
@@ -133,7 +145,9 @@ class Ticket
     public function findWithRequester(int $id): mixed
     {
         return $this->get_row(
-            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+            'select tickets.*, users.username as requester_username,
+                    coalesce(tickets.email_requester_name, users.name) as requester_name,
+                    coalesce(tickets.email_requester_email, users.email) as requester_email,
                     assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
@@ -170,6 +184,61 @@ class Ticket
         }
 
         return empty($this->errors);
+    }
+
+    public function makeEmailCreateData(int $userId, string $subject, string $body, string $ticketNumber, string $fromName, string $fromEmail, bool $isPendingRequester): array
+    {
+        $data = $this->makeCreateData($userId, $subject, $body, $ticketNumber);
+        $data['source'] = 'email';
+        $data['email_requester_name'] = trim($fromName) !== '' ? trim($fromName) : $fromEmail;
+        $data['email_requester_email'] = strtolower(trim($fromEmail));
+        $data['is_pending_requester'] = $isPendingRequester ? 1 : 0;
+
+        return $data;
+    }
+
+    public function findByEmailToken(string $token): mixed
+    {
+        $token = trim($token);
+        if (!preg_match('/^[a-f0-9]{32}$/', $token))
+        {
+            return false;
+        }
+
+        return $this->get_row(
+            'select tickets.*, users.username as requester_username,
+                    coalesce(tickets.email_requester_name, users.name) as requester_name,
+                    coalesce(tickets.email_requester_email, users.email) as requester_email,
+                    assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
+             from tickets
+             join users on users.id = tickets.user_id
+             left join users assignee on assignee.id = tickets.assigned_to
+             where tickets.email_token = :email_token
+             limit 1',
+            ['email_token' => $token]
+        );
+    }
+
+    public function findByTicketNumber(string $ticketNumber): mixed
+    {
+        $ticketNumber = trim($ticketNumber);
+        if ($ticketNumber === '')
+        {
+            return false;
+        }
+
+        return $this->get_row(
+            'select tickets.*, users.username as requester_username,
+                    coalesce(tickets.email_requester_name, users.name) as requester_name,
+                    coalesce(tickets.email_requester_email, users.email) as requester_email,
+                    assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
+             from tickets
+             join users on users.id = tickets.user_id
+             left join users assignee on assignee.id = tickets.assigned_to
+             where tickets.ticket_number = :ticket_number
+             limit 1',
+            ['ticket_number' => $ticketNumber]
+        );
     }
 
     public function isValidStatus(string $status): bool

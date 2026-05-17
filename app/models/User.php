@@ -199,6 +199,29 @@ class User
         return $this->first(['id' => $id]);
     }
 
+    public function findActiveByEmail(string $email): mixed
+    {
+        $email = strtolower(trim($email));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            return false;
+        }
+
+        return $this->get_row(
+            'select *
+             from users
+             where lower(email) = :email
+               and is_active = 1
+             limit 1',
+            ['email' => $email]
+        );
+    }
+
+    public function emailGuestUser(): mixed
+    {
+        return $this->first(['username' => 'email_guest']);
+    }
+
     public function listForAdmin(): array|bool
     {
         return $this->query(
