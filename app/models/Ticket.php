@@ -61,8 +61,8 @@ class Ticket
     public function listForUser(int $userId): array|bool
     {
         return $this->query(
-            'select tickets.*, users.username as requester_username, users.name as requester_name,
-                    assignee.username as assignee_username, assignee.name as assignee_name
+            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+                    assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
              left join users assignee on assignee.id = tickets.assigned_to
@@ -117,8 +117,8 @@ class Ticket
         $whereSql = empty($where) ? '' : ' where ' . implode(' and ', $where);
 
         return $this->query(
-            'select tickets.*, users.username as requester_username, users.name as requester_name,
-                    assignee.username as assignee_username, assignee.name as assignee_name
+            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+                    assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
              left join users assignee on assignee.id = tickets.assigned_to
@@ -131,8 +131,8 @@ class Ticket
     public function findWithRequester(int $id): mixed
     {
         return $this->get_row(
-            'select tickets.*, users.username as requester_username, users.name as requester_name,
-                    assignee.username as assignee_username, assignee.name as assignee_name
+            'select tickets.*, users.username as requester_username, users.name as requester_name, users.email as requester_email,
+                    assignee.username as assignee_username, assignee.name as assignee_name, assignee.email as assignee_email
              from tickets
              join users on users.id = tickets.user_id
              left join users assignee on assignee.id = tickets.assigned_to

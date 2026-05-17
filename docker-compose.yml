@@ -28,6 +28,10 @@ services:
       LDAP_DOMAIN: ${LDAP_DOMAIN:-}
       LDAP_USER_FILTER_ATTRIBUTE: ${LDAP_USER_FILTER_ATTRIBUTE:-samaccountname}
       LDAP_TLS_REQUIRE_CERT: ${LDAP_TLS_REQUIRE_CERT:-true}
+      MAIL_ENABLED: ${MAIL_ENABLED:-false}
+      MAILER_DSN: ${MAILER_DSN:-}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Rockdesk}
     ports:
       - "8080:80"
 

@@ -253,6 +253,33 @@ class User
         );
     }
 
+    public function listActiveStaffWithEmail(): array|bool
+    {
+        return $this->query(
+            "select id, name, username, email
+             from users
+             where role in ('staff', 'admin')
+               and is_active = 1
+               and email is not null
+               and email != ''
+             order by name asc, username asc"
+        );
+    }
+
+    public function findActiveUserWithEmail(int $id): mixed
+    {
+        return $this->get_row(
+            "select id, name, username, email, role
+             from users
+             where id = :id
+               and is_active = 1
+               and email is not null
+               and email != ''
+             limit 1",
+            ['id' => $id]
+        );
+    }
+
     public function isAssignableStaff(int $id): bool
     {
         return (bool)$this->get_row(

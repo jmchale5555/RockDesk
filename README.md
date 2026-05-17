@@ -8,9 +8,9 @@ A straightforward IT support ticket handling system built on a custom PHP MVC mo
 - Uses server-rendered PHP views with small HTMX and Alpine enhancements instead of a SPA or frontend build pipeline.
 - Supports admin-managed local users with roles for users, staff, and admins.
 - Includes optional Active Directory / LDAPS authentication while keeping application roles controlled locally.
+- Sends optional SMTP email notifications for ticket creation, replies, assignments, and resolution.
 - Records ticket events for key workflow changes such as creation, replies, assignment, priority changes, status changes, reopening, and auto-close.
 - Keeps deployment practical with Docker Compose, Apache, PHP, MariaDB, local static assets, project-native migrations, and seeders.
-- Defers heavier features such as email notifications, attachments, internal notes, SLAs, departments, and reporting until after the core ticket workflow is stable.
 
 ## Docker commands
 
@@ -66,6 +66,14 @@ Run these from the project root:
 - The app attempts local authentication first, then LDAP if local auth fails.
 - LDAP users are created or synced locally after successful AD authentication.
 - LDAP passwords are never stored locally; roles remain controlled in the app.
+
+## Email Notifications
+
+- Email settings are environment-driven; use `.env.example` as the template.
+- Leave `MAIL_ENABLED=false` or `MAILER_DSN` empty to disable delivery in local development.
+- Set `MAIL_ENABLED=true`, `MAILER_DSN`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME` to enable synchronous SMTP delivery.
+- Notifications currently cover new tickets to staff/admins, staff public replies to requesters, requester replies to assigned staff or the staff queue, assignment changes to the assignee, and resolved tickets to requesters.
+- Internal staff-only notes never notify the requester.
 
 ## Running without Docker
 

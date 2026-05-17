@@ -4,6 +4,7 @@ use Model\Ticket;
 use Model\TicketAttachment;
 use Model\TicketComment;
 use Model\TicketEvent;
+use Core\TicketNotifier;
 use PHPUnit\Framework\TestCase;
 
 final class TicketTest extends TestCase
@@ -123,6 +124,24 @@ final class TicketTest extends TestCase
         $this->assertTrue($ticket->isValidStaffStatusFilter(''));
         $this->assertTrue($ticket->isValidStaffStatusFilter('resolved'));
         $this->assertFalse($ticket->isValidStaffStatusFilter('not-a-status'));
+    }
+
+    public function testTicketNotifierRecipientCleanupFiltersInvalidExcludedAndDuplicateEmails(): void
+    {
+        $notifier = new TicketNotifier;
+
+        $recipients = $notifier->cleanRecipients([
+            ['id' => 1, 'name' => 'Actor', 'email' => 'actor@example.com'],
+            ['id' => 2, 'name' => 'Valid', 'email' => 'valid@example.com'],
+            ['id' => 3, 'name' => 'Duplicate', 'email' => 'VALID@example.com'],
+            ['id' => 4, 'name' => 'Bad', 'email' => 'not-an-email'],
+            (object)['id' => 5, 'name' => 'Other', 'email' => 'other@example.com'],
+        ], 1);
+
+        $this->assertSame([
+            ['id' => 2, 'name' => 'Valid', 'email' => 'valid@example.com'],
+            ['id' => 5, 'name' => 'Other', 'email' => 'other@example.com'],
+        ], $recipients);
     }
 
     public function testTicketPriorityValidationAllowsKnownPrioritiesOnly(): void

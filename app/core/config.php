@@ -23,6 +23,10 @@ $ldapTimeout = (int)(getenv('LDAP_TIMEOUT') ?: 5);
 $ldapDomain = trim((string)(getenv('LDAP_DOMAIN') ?: ''));
 $ldapUserFilterAttribute = trim((string)(getenv('LDAP_USER_FILTER_ATTRIBUTE') ?: 'samaccountname'));
 $ldapTlsRequireCert = filter_var(getenv('LDAP_TLS_REQUIRE_CERT') ?: 'true', FILTER_VALIDATE_BOOLEAN);
+$mailerDsn = trim((string)(getenv('MAILER_DSN') ?: ''));
+$mailFromAddress = trim((string)(getenv('MAIL_FROM_ADDRESS') ?: ''));
+$mailFromName = trim((string)(getenv('MAIL_FROM_NAME') ?: $appName));
+$mailEnabled = filter_var(getenv('MAIL_ENABLED') ?: ($mailerDsn !== '' && $mailFromAddress !== '' ? 'true' : 'false'), FILTER_VALIDATE_BOOLEAN);
 
 define('DBNAME', $dbName);
 define('DBHOST', $dbHost);
@@ -49,3 +53,7 @@ define('LDAP_TIMEOUT', max(1, $ldapTimeout));
 define('LDAP_DOMAIN', $ldapDomain);
 define('LDAP_USER_FILTER_ATTRIBUTE', preg_match('/^[a-zA-Z][a-zA-Z0-9-]*$/', $ldapUserFilterAttribute) ? $ldapUserFilterAttribute : 'samaccountname');
 define('LDAP_TLS_REQUIRE_CERT', $ldapTlsRequireCert);
+define('MAIL_ENABLED', $mailEnabled);
+define('MAILER_DSN', $mailerDsn);
+define('MAIL_FROM_ADDRESS', $mailFromAddress);
+define('MAIL_FROM_NAME', $mailFromName);

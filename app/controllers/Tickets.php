@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Core\TicketNotifier;
 use Model\Ticket;
 use Model\TicketAttachment;
 use Model\TicketComment;
@@ -85,6 +86,12 @@ class Tickets
                     'new_value' => 'new',
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
+
+                $createdWithRequester = $ticket->findWithRequester((int)$created->id);
+                if ($createdWithRequester)
+                {
+                    (new TicketNotifier)->notifyTicketCreated($createdWithRequester, current_user());
+                }
 
                 message('Ticket created successfully.');
                 redirect('tickets/show/' . (int)$created->id);
@@ -266,6 +273,7 @@ class Tickets
         }
 
         $isStaff = is_staff_or_admin();
+        $actor = current_user();
         $body = sanitize_rich_text((string)($_POST['body'] ?? ''));
         $plainBody = rich_text_to_plain_text($body);
         $hasMessage = $plainBody !== '';
@@ -375,6 +383,31 @@ class Tickets
                 null,
                 trim($body)
             );
+        }
+
+        $updatedTicket = $ticket->findWithRequester((int)$row->id) ?: $row;
+        $notifier = new TicketNotifier;
+
+        if ($assignmentChanged)
+        {
+            $notifier->notifyAssignmentChanged($updatedTicket, $assignedTo, $actor);
+        }
+
+        if ($hasMessage && !$isInternal)
+        {
+            if ($isStaff && $newStatus === 'resolved')
+            {
+                $notifier->notifyResolved($updatedTicket, $actor, $body);
+            }
+            else
+            if ($isStaff)
+            {
+                $notifier->notifyStaffReply($updatedTicket, $actor, $body);
+            }
+            else
+            {
+                $notifier->notifyUserReply($updatedTicket, $actor, $body);
+            }
         }
 
         message($this->messageSuccessText($hasMessage, $ticketChanged));
