@@ -42,6 +42,8 @@ $inboundImapProcessedMailbox = trim((string)(getenv('INBOUND_IMAP_PROCESSED_MAIL
 $inboundImapFailedMailbox = trim((string)(getenv('INBOUND_IMAP_FAILED_MAILBOX') ?: 'Failed'));
 $inboundImapValidateCert = filter_var(getenv('INBOUND_IMAP_VALIDATE_CERT') ?: 'true', FILTER_VALIDATE_BOOLEAN);
 $inboundImapMaxMessages = (int)(getenv('INBOUND_IMAP_MAX_MESSAGES') ?: 25);
+$inboundMailAttachmentsEnabled = filter_var(getenv('INBOUND_MAIL_ATTACHMENTS_ENABLED') ?: 'true', FILTER_VALIDATE_BOOLEAN);
+$inboundMailAttachmentMinBytes = (int)(getenv('INBOUND_MAIL_ATTACHMENT_MIN_BYTES') ?: 2048);
 
 define('DBNAME', $dbName);
 define('DBHOST', $dbHost);
@@ -87,3 +89,5 @@ define('INBOUND_IMAP_PROCESSED_MAILBOX', $inboundImapProcessedMailbox);
 define('INBOUND_IMAP_FAILED_MAILBOX', $inboundImapFailedMailbox);
 define('INBOUND_IMAP_VALIDATE_CERT', $inboundImapValidateCert);
 define('INBOUND_IMAP_MAX_MESSAGES', max(1, min(250, $inboundImapMaxMessages)));
+define('INBOUND_MAIL_ATTACHMENTS_ENABLED', $inboundMailAttachmentsEnabled);
+define('INBOUND_MAIL_ATTACHMENT_MIN_BYTES', max(0, $inboundMailAttachmentMinBytes));

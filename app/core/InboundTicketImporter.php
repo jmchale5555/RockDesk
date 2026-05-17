@@ -22,6 +22,7 @@ class InboundTicketImporter
         private ?User $users = null,
         private ?InboundMailCleaner $cleaner = null,
         private ?InboundMailInspector $inspector = null,
+        private ?InboundAttachmentImporter $attachmentImporter = null,
         private ?TicketNotifier $notifier = null,
     ) {
         $this->tickets ??= new Ticket;
@@ -32,6 +33,7 @@ class InboundTicketImporter
         $this->users ??= new User;
         $this->cleaner ??= new InboundMailCleaner;
         $this->inspector ??= new InboundMailInspector;
+        $this->attachmentImporter ??= new InboundAttachmentImporter;
         $this->notifier ??= new TicketNotifier;
     }
 
@@ -133,6 +135,8 @@ class InboundTicketImporter
             $this->recordEvent((int)$ticket->id, (int)$actor->id, is_staff_or_admin($actor) ? 'status_changed' : 'reopened_by_user_reply', (string)$ticket->status, $newStatus);
         }
 
+        $attachmentCount = $this->attachmentImporter->importForTicket($ticket, (int)$actor->id, $message->attachments);
+
         $updatedTicket = $this->tickets->findWithRequester((int)$ticket->id) ?: $ticket;
         if (is_staff_or_admin($actor))
         {
@@ -145,7 +149,7 @@ class InboundTicketImporter
 
         $this->recordInbound($message, 'processed', null, (int)$ticket->id);
 
-        return ['status' => 'processed', 'action' => 'reply_created', 'ticket_id' => (int)$ticket->id];
+        return ['status' => 'processed', 'action' => 'reply_created', 'ticket_id' => (int)$ticket->id, 'attachments_imported' => $attachmentCount];
     }
 
     private function importNewTicket(InboundMessage $message, mixed $actor, string $body): array
@@ -193,10 +197,11 @@ class InboundTicketImporter
 
         $this->recordEvent((int)$created->id, $isPending ? null : (int)$actor->id, 'created', null, 'new', $body);
         $this->recordEvent((int)$created->id, $isPending ? null : (int)$actor->id, 'email_imported', null, $message->fromEmail);
+        $attachmentCount = $this->attachmentImporter->importForTicket($created, (int)$actor->id, $message->attachments);
         $this->recordInbound($message, 'processed', null, (int)$created->id);
         $this->notifier->notifyTicketCreated($created, $actor);
 
-        return ['status' => 'processed', 'action' => $isPending ? 'pending_ticket_created' : 'ticket_created', 'ticket_id' => (int)$created->id];
+        return ['status' => 'processed', 'action' => $isPending ? 'pending_ticket_created' : 'ticket_created', 'ticket_id' => (int)$created->id, 'attachments_imported' => $attachmentCount];
     }
 
     private function matchTicket(InboundMessage $message): mixed

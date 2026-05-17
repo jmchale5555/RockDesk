@@ -3,6 +3,7 @@
 use Core\InboundMailCleaner;
 use Core\InboundMailInspector;
 use Core\InboundMessage;
+use Core\InboundAttachmentImporter;
 use Core\InboundTicketImporter;
 use Core\ImapInboundMailSource;
 use Model\Ticket;
@@ -172,5 +173,42 @@ final class InboundMailTest extends TestCase
         $source = new ImapInboundMailSource;
 
         $this->assertTrue($source->isConfigured());
+    }
+
+    public function testInboundAttachmentImporterAcceptsAllowedImageContent(): void
+    {
+        $importer = new InboundAttachmentImporter;
+        $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
+
+        $this->assertTrue($importer->isImportable([
+            'filename' => 'screenshot.png',
+            'mime_type' => 'image/png',
+            'content' => $png,
+            'size' => strlen($png),
+        ]));
+    }
+
+    public function testInboundAttachmentImporterRejectsUnsupportedContent(): void
+    {
+        $importer = new InboundAttachmentImporter;
+
+        $this->assertFalse($importer->isImportable([
+            'filename' => 'notes.txt',
+            'mime_type' => 'text/plain',
+            'content' => 'not an image',
+            'size' => 12,
+        ]));
+    }
+
+    public function testInboundAttachmentImporterRejectsSmallSignatureImages(): void
+    {
+        $importer = new InboundAttachmentImporter;
+
+        $this->assertFalse($importer->isImportable([
+            'filename' => 'tracking.png',
+            'mime_type' => 'image/png',
+            'content' => 'x',
+            'size' => 0,
+        ]));
     }
 }

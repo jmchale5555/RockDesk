@@ -14,6 +14,7 @@ require __DIR__ . '/../app/core/TicketNotifier.php';
 require __DIR__ . '/../app/core/InboundMessage.php';
 require __DIR__ . '/../app/core/InboundMailCleaner.php';
 require __DIR__ . '/../app/core/InboundMailInspector.php';
+require __DIR__ . '/../app/core/InboundAttachmentImporter.php';
 require __DIR__ . '/../app/core/InboundTicketImporter.php';
 require __DIR__ . '/../app/core/ImapInboundMailSource.php';
 require __DIR__ . '/../app/models/User.php';

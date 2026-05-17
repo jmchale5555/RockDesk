@@ -83,6 +83,7 @@ Run these from the project root:
 - Run `make import-mail` manually in development, or run `php scripts/import-mail.php` from cron every 1-5 minutes in production.
 - The import command uses a lock file at `storage/import-mail.lock` so concurrent runs exit safely.
 - Processed and ignored messages are moved to `INBOUND_IMAP_PROCESSED_MAILBOX` when configured; failed messages are moved to `INBOUND_IMAP_FAILED_MAILBOX`.
+- Standalone inbound image attachments are imported when `INBOUND_MAIL_ATTACHMENTS_ENABLED=true`; JPG, PNG, and WebP are allowed up to 5 MB, with tiny images below `INBOUND_MAIL_ATTACHMENT_MIN_BYTES` ignored to reduce signature/logo noise.
 
 ## Running without Docker
 

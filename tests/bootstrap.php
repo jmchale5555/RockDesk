@@ -17,6 +17,8 @@ defined('INBOUND_IMAP_MAILBOX') || define('INBOUND_IMAP_MAILBOX', 'INBOX');
 defined('INBOUND_IMAP_PROCESSED_MAILBOX') || define('INBOUND_IMAP_PROCESSED_MAILBOX', 'Processed');
 defined('INBOUND_IMAP_FAILED_MAILBOX') || define('INBOUND_IMAP_FAILED_MAILBOX', 'Failed');
 defined('INBOUND_IMAP_VALIDATE_CERT') || define('INBOUND_IMAP_VALIDATE_CERT', true);
+defined('INBOUND_MAIL_ATTACHMENTS_ENABLED') || define('INBOUND_MAIL_ATTACHMENTS_ENABLED', true);
+defined('INBOUND_MAIL_ATTACHMENT_MIN_BYTES') || define('INBOUND_MAIL_ATTACHMENT_MIN_BYTES', 1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../app/core/Session.php';
@@ -28,6 +30,7 @@ require_once __DIR__ . '/../app/core/TicketNotifier.php';
 require_once __DIR__ . '/../app/core/InboundMessage.php';
 require_once __DIR__ . '/../app/core/InboundMailInspector.php';
 require_once __DIR__ . '/../app/core/InboundMailCleaner.php';
+require_once __DIR__ . '/../app/core/InboundAttachmentImporter.php';
 require_once __DIR__ . '/../app/core/InboundTicketImporter.php';
 require_once __DIR__ . '/../app/core/ImapInboundMailSource.php';
 require_once __DIR__ . '/../app/models/User.php';
