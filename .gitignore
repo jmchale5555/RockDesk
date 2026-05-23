@@ -10,3 +10,4 @@ vendor/
 .phpunit.result.cache
 storage/ticket-attachments/*
 !storage/ticket-attachments/.gitkeep
+docker/ldap/ad-ca.local.crt
