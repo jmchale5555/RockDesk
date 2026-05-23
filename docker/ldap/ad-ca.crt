@@ -1,0 +1,12 @@
+dummy cert file - replace this file with your full AD/LDAPS CA certificate chain in PEM format.
+
+Expected real content should look like:
+
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+
+Include the root CA and any required intermediate CA certificates for the domain controllers' LDAPS certificates.

@@ -69,6 +69,8 @@ Run these from the project root:
 - The app attempts local authentication first, then LDAP if local auth fails.
 - LDAP users are created or synced locally after successful AD authentication.
 - LDAP passwords are never stored locally; roles remain controlled in the app.
+- For LDAPS with a private/internal AD CA, replace `docker/ldap/ad-ca.crt` with the full PEM CA chain and rebuild the web image. The Dockerfile installs a real PEM file into the system CA trust store and configures OpenLDAP to use `/etc/ssl/certs/ca-certificates.crt`.
+- The tracked `docker/ldap/ad-ca.crt` file is a placeholder so the image still builds before a real AD certificate chain is available.
 
 ## Email Notifications
 
