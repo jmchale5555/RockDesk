@@ -30,6 +30,7 @@ Run these from the project root:
 - `make seed` - run PHP seeders in dev container
 - `make close-resolved` - auto-close tickets resolved longer than `TICKET_AUTO_CLOSE_DAYS` days
 - `make import-mail` - import inbound support mail from the configured source
+- `make check-ldap` - test configured LDAP settings, service bind, lookup, and optional authentication
 - `make db-status` - print migration/seeder/user table status from dev DB
 - `make db-reset` - drop/recreate dev database, then run migrations + seeders
 - `make prune-all` - run `docker system prune -a --volumes` (destructive)
@@ -72,6 +73,7 @@ Run these from the project root:
 - For LDAPS with a private/internal AD CA, either replace tracked `docker/ldap/ad-ca.crt` with the full PEM CA chain, or create ignored local-only `docker/ldap/ad-ca.local.crt` for testing without committing private certs. The local file takes precedence during Docker builds.
 - The Dockerfile copies the selected cert to `/etc/ldap/certs/ad-ca.crt` with `root:root` ownership and `0644` permissions, installs a real PEM file into the system CA trust store, and configures OpenLDAP to use `/etc/ssl/certs/ca-certificates.crt`.
 - The tracked `docker/ldap/ad-ca.crt` file is a placeholder so the image still builds before a real AD certificate chain is available.
+- Run `make check-ldap` to test configured LDAP settings and service bind. Run `make check-ldap ARGS="jdoe"` to also test user lookup, or `make check-ldap ARGS="jdoe --prompt-password"` to test lookup and user authentication without syncing the user into Rockdesk. For non-interactive checks, use `LDAP_CHECK_PASSWORD='secret' make check-ldap ARGS="jdoe"`.
 
 ## Email Notifications
 

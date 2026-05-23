@@ -1,4 +1,4 @@
-.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update test migrate seed close-resolved import-mail db-status db-reset prune-all
+.PHONY: help up up-build down up-dev up-dev-build down-dev composer-install composer-update test migrate seed close-resolved import-mail check-ldap db-status db-reset prune-all
 
 COMPOSE_BASE = docker compose
 COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
@@ -18,6 +18,7 @@ help:
 	@printf "  make seed          - run PHP seeders in dev container\n"
 	@printf "  make close-resolved - auto-close resolved tickets past the configured window\n"
 	@printf "  make import-mail    - import inbound mail from configured source\n"
+	@printf "  make check-ldap     - test LDAP settings, bind, lookup, and optional auth\n"
 	@printf "  make db-status     - print DB migration/seeder/user status\n"
 	@printf "  make db-reset      - drop/recreate DB, then migrate + seed (dev)\n"
 	@printf "  make prune-all     - docker system prune -a --volumes (destructive)\n"
@@ -60,6 +61,9 @@ close-resolved:
 
 import-mail:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/import-mail.php
+
+check-ldap:
+	$(COMPOSE_DEV) run --rm --no-deps web php scripts/check-ldap.php $(ARGS)
 
 db-status:
 	$(COMPOSE_DEV) run --rm --no-deps --user "$$(id -u):$$(id -g)" web php scripts/db-status.php

@@ -61,8 +61,8 @@ class LdapAuth
             'username' => LDAP_USERNAME,
             'password' => LDAP_PASSWORD,
             'port' => LDAP_PORT,
-            'use_ssl' => LDAP_USE_SSL,
-            'use_tls' => LDAP_USE_TLS,
+            'use_tls' => LDAP_USE_SSL,
+            'use_starttls' => LDAP_USE_TLS,
             'timeout' => LDAP_TIMEOUT,
         ]);
 
