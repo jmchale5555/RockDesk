@@ -111,11 +111,9 @@
                 <a href="<?= ROOT ?>/profile"
                     x-on:click="closeMenu()"
                     hx-get="<?= ROOT ?>/profile"
-                    hx-target="#page-content"
-                    hx-select="#page-content > *"
-                    hx-select-oob="#site-nav"
+                    hx-target="#profile-modal-content"
+                    hx-select="#profile-card"
                     hx-swap="innerHTML"
-                    hx-push-url="true"
                     <?= $url === 'profile' ? 'aria-current="page"' : '' ?>>My Profile</a>
 
                 <a href="<?= ROOT ?>/password"

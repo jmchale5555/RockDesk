@@ -159,6 +159,55 @@
     color: var(--pico-primary-inverse);
 }
 
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.62);
+    z-index: 1000;
+}
+
+.profile-modal {
+    position: relative;
+    width: min(100%, 34rem);
+    max-height: min(42rem, calc(100vh - 2rem));
+    margin: 0;
+    overflow: auto;
+    border: 1px solid var(--pico-muted-border-color);
+    box-shadow: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.38);
+}
+
+.profile-modal .profile-panel {
+    width: 100%;
+    margin: 0;
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2rem;
+    height: 2rem;
+    margin: 0;
+    padding: 0;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+.profile-summary dt {
+    color: var(--pico-muted-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.profile-summary dd {
+    margin-bottom: 0.75rem;
+}
+
 .password-input-wrap {
     position: relative;
 }

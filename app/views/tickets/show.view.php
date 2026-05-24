@@ -100,11 +100,10 @@
             <dd>
                 <a href="<?= ROOT ?>/profile/show/<?= (int)$ticket->user_id ?>"
                     hx-get="<?= ROOT ?>/profile/show/<?= (int)$ticket->user_id ?>"
-                    hx-target="#page-content"
-                    hx-select="#page-content > *"
-                    hx-select-oob="#site-nav"
+                    hx-target="#profile-modal-content"
+                    hx-select="#profile-card"
                     hx-swap="innerHTML"
-                    hx-push-url="true"><?= esc($ticket->requester_name) ?></a>
+                    ><?= esc($ticket->requester_name) ?></a>
                 <?php if ((int)($ticket->is_pending_requester ?? 0) === 1): ?>
                     <small><?= esc($ticket->requester_email ?? '') ?></small>
                 <?php else: ?>
@@ -147,11 +146,10 @@
                     <strong>
                         <a href="<?= ROOT ?>/profile/show/<?= (int)$comment->user_id ?>"
                             hx-get="<?= ROOT ?>/profile/show/<?= (int)$comment->user_id ?>"
-                            hx-target="#page-content"
-                            hx-select="#page-content > *"
-                            hx-select-oob="#site-nav"
+                            hx-target="#profile-modal-content"
+                            hx-select="#profile-card"
                             hx-swap="innerHTML"
-                            hx-push-url="true"><?= esc($comment->name) ?></a>
+                            ><?= esc($comment->name) ?></a>
                     </strong>
                     <?php if ((int)($comment->is_internal ?? 0) === 1): ?>
                         <mark>Internal note</mark>
@@ -176,11 +174,10 @@
                         <small>
                             <a href="<?= ROOT ?>/profile/show/<?= (int)$attachment->user_id ?>"
                                 hx-get="<?= ROOT ?>/profile/show/<?= (int)$attachment->user_id ?>"
-                                hx-target="#page-content"
-                                hx-select="#page-content > *"
-                                hx-select-oob="#site-nav"
+                                hx-target="#profile-modal-content"
+                                hx-select="#profile-card"
                                 hx-swap="innerHTML"
-                                hx-push-url="true"><?= esc($attachment->username) ?></a>
+                                ><?= esc($attachment->username) ?></a>
                             · <?= esc(number_format((int)$attachment->file_size / 1024, 1)) ?> KB · <?= esc($attachment->created_at) ?>
                         </small>
                     </figcaption>

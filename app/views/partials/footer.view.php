@@ -2,10 +2,32 @@
     <footer class="container">
         <small><?= APP_NAME ?></small>
     </footer>
+
+    <?php if (!empty($_SESSION['USER'])): ?>
+        <div class="modal-backdrop"
+            x-data="{ open: false }"
+            x-cloak
+            x-show="open"
+            x-on:profile-modal-open.window="open = true"
+            x-on:keydown.escape.window="open = false"
+            x-on:click.self="open = false">
+            <section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+                <button type="button" class="modal-close" aria-label="Close profile" x-on:click="open = false">&times;</button>
+                <div id="profile-modal-content"></div>
+            </section>
+        </div>
+    <?php endif; ?>
+
     <script defer src="<?= ROOT ?>/assets/js/trix-2-0-8.umd.min.js"></script>
     <script defer src="<?= ROOT ?>/assets/js/alpine-3-15-11.min.js"></script>
     <script defer src="<?= ROOT ?>/assets/js/htmx-2-0-10.min.js"></script>
     <script>
+        document.addEventListener('htmx:afterSwap', function (event) {
+            if (event.target && event.target.id === 'profile-modal-content') {
+                window.dispatchEvent(new CustomEvent('profile-modal-open'));
+            }
+        });
+
         document.addEventListener('trix-initialize', function (event) {
             const toolbar = event.target.toolbarElement;
             const attachButton = toolbar ? toolbar.querySelector('.trix-button--icon-attach') : null;

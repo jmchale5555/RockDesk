@@ -1,8 +1,8 @@
 <?php include __DIR__ . '/../partials/header.view.php' ?>
 
-<article class="auth-panel profile-panel">
+<article id="profile-card" class="auth-panel profile-panel">
     <header>
-        <h1><?= !empty($isOwnProfile) ? 'My Profile' : esc($user->name) ?></h1>
+        <h1 id="profile-modal-title"><?= !empty($isOwnProfile) ? 'My Profile' : esc($user->name) ?></h1>
         <p><?= esc($user->username) ?></p>
     </header>
 
@@ -29,10 +29,9 @@
     <?php if (!empty($isOwnProfile) && !empty($canEditEmail)): ?>
         <form method="post" action="<?= ROOT ?>/profile"
             hx-post="<?= ROOT ?>/profile"
-            hx-target="#page-content"
-            hx-select="#page-content > *"
-            hx-select-oob="#site-nav"
-            hx-swap="innerHTML">
+            hx-target="#profile-card"
+            hx-select="#profile-card"
+            hx-swap="outerHTML">
             <?= csrf_field() ?>
 
             <label for="email">Email address</label>
