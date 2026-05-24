@@ -35,16 +35,38 @@ function host_name(string $host): string
     return $host;
 }
 
-function option_value(array $options, string $long, int $position): ?string
+function positional_args(array $argv): array
+{
+    $positionals = [];
+
+    foreach (array_slice($argv, 1) as $argument)
+    {
+        if (str_starts_with((string)$argument, '--'))
+        {
+            continue;
+        }
+
+        $positionals[] = trim((string)$argument);
+    }
+
+    return $positionals;
+}
+
+function has_flag(array $argv, string $flag): bool
+{
+    return in_array($flag, array_slice($argv, 1), true);
+}
+
+function option_value(array $options, array $positionals, string $long, int $position): ?string
 {
     if (isset($options[$long]) && is_scalar($options[$long]))
     {
         return trim((string)$options[$long]);
     }
 
-    global $argv;
+    $index = $position - 1;
 
-    return isset($argv[$position]) ? trim((string)$argv[$position]) : null;
+    return isset($positionals[$index]) ? trim((string)$positionals[$index]) : null;
 }
 
 function prompt_secret(string $prompt): string
@@ -64,8 +86,9 @@ function prompt_secret(string $prompt): string
 }
 
 $options = getopt('', ['username::', 'password::', 'prompt-password', 'help']);
+$positionals = positional_args($argv);
 
-if (isset($options['help']))
+if (isset($options['help']) || has_flag($argv, '--help'))
 {
     line('Usage: php scripts/check-ldap.php [username] [password]');
     line('       php scripts/check-ldap.php --username=jdoe --prompt-password');
@@ -77,10 +100,10 @@ if (isset($options['help']))
     exit(0);
 }
 
-$username = option_value($options, 'username', 1) ?? '';
-$password = option_value($options, 'password', 2) ?? (string)(getenv('LDAP_CHECK_PASSWORD') ?: '');
+$username = option_value($options, $positionals, 'username', 1) ?? '';
+$password = option_value($options, $positionals, 'password', 2) ?? (string)(getenv('LDAP_CHECK_PASSWORD') ?: '');
 
-if ($username !== '' && $password === '' && isset($options['prompt-password']))
+if ($username !== '' && $password === '' && (isset($options['prompt-password']) || has_flag($argv, '--prompt-password')))
 {
     $password = prompt_secret('LDAP password for ' . $username . ': ');
 }
