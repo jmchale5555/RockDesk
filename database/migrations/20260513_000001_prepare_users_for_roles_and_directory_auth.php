@@ -45,7 +45,11 @@ return [
         if (!$columnExists($pdo, 'role'))
         {
             $pdo->exec("ALTER TABLE users ADD COLUMN role ENUM('user', 'staff', 'admin') NOT NULL DEFAULT 'user' AFTER password");
-            $pdo->exec("UPDATE users SET role = CASE WHEN is_admin = 1 THEN 'admin' ELSE 'user' END");
+
+            if ($columnExists($pdo, 'is_admin'))
+            {
+                $pdo->exec("UPDATE users SET role = CASE WHEN is_admin = 1 THEN 'admin' ELSE 'user' END");
+            }
         }
 
         if (!$columnExists($pdo, 'auth_provider'))
