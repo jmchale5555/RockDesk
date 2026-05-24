@@ -132,4 +132,25 @@ final class UserTest extends TestCase
         $this->assertArrayHasKey('name', $user->errors);
         $this->assertArrayHasKey('email', $user->errors);
     }
+
+    public function testProfileEmailValidationAcceptsValidEmail(): void
+    {
+        $user = new User;
+
+        $this->assertTrue($user->validateProfileEmail('person@example.com'));
+    }
+
+    public function testProfileEmailValidationRejectsMissingInvalidAndTooLongEmail(): void
+    {
+        $user = new User;
+
+        $this->assertFalse($user->validateProfileEmail(''));
+        $this->assertArrayHasKey('email', $user->errors);
+
+        $this->assertFalse($user->validateProfileEmail('not-an-email'));
+        $this->assertArrayHasKey('email', $user->errors);
+
+        $this->assertFalse($user->validateProfileEmail(str_repeat('a', 180) . '@example.com'));
+        $this->assertArrayHasKey('email', $user->errors);
+    }
 }

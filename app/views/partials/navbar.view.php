@@ -108,6 +108,16 @@
             </button>
 
             <div class="nav-menu-panel" x-cloak x-show="open" x-on:click.outside="closeMenu()">
+                <a href="<?= ROOT ?>/profile"
+                    x-on:click="closeMenu()"
+                    hx-get="<?= ROOT ?>/profile"
+                    hx-target="#page-content"
+                    hx-select="#page-content > *"
+                    hx-select-oob="#site-nav"
+                    hx-swap="innerHTML"
+                    hx-push-url="true"
+                    <?= $url === 'profile' ? 'aria-current="page"' : '' ?>>My Profile</a>
+
                 <a href="<?= ROOT ?>/password"
                     x-on:click="closeMenu()"
                     hx-get="<?= ROOT ?>/password"

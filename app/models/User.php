@@ -199,6 +199,40 @@ class User
         return $this->first(['id' => $id]);
     }
 
+    public function findPublicProfileById(int $id): mixed
+    {
+        return $this->get_row(
+            'select id, name, username, email, role, auth_provider
+             from users
+             where id = :id
+             limit 1',
+            ['id' => $id]
+        );
+    }
+
+    public function validateProfileEmail(string $email): bool
+    {
+        $this->errors = [];
+        $email = trim($email);
+
+        if ($email === '')
+        {
+            $this->errors['email'] = 'Email is required';
+        }
+        else
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            $this->errors['email'] = 'Enter a valid email address';
+        }
+        else
+        if (mb_strlen($email) > 190)
+        {
+            $this->errors['email'] = 'Email must be 190 characters or fewer';
+        }
+
+        return empty($this->errors);
+    }
+
     public function findActiveByEmail(string $email): mixed
     {
         $email = strtolower(trim($email));
